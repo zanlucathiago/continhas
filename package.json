@@ -1,0 +1,29 @@
+{
+  "name": "continhas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zanlucathiago/continhas.git"
+  },
+  "author": "Thiago Zanluca",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zanlucathiago/continhas/issues"
+  },
+  "homepage": "https://github.com/zanlucathiago/continhas#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongoose": "^6.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
