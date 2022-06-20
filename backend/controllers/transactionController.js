@@ -11,9 +11,9 @@ const getTransactions = asyncHandler(async (req, res) => {
 // @route   POST /api/goals
 // @access  Private
 const setTransaction = asyncHandler(async (req, res) => {
-  if (!req.body.date) {
+  if (!req.body.description) {
     res.status(400)
-    throw new Error('Adicione uma data para a transação');
+    throw new Error('Adicione uma descrição para a transação');
   }
 
   res.status(200).json('goal')
