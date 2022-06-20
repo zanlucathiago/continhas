@@ -9,6 +9,11 @@ const getTransactions = (req, res) => {
 // @route   POST /api/goals
 // @access  Private
 const setTransaction = (req, res) => {
+  if (!req.body.date) {
+    res.status(400)
+    throw new Error('Adicione uma data para a transação');
+  }
+
   res.status(200).json('goal')
 }
 
