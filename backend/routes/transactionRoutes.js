@@ -1,20 +1,13 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
+const {
+  getTransactions,
+  setTransaction,
+  updateTransaction,
+  deleteTransaction,
+} = require('../controllers/transactionController')
 
-router.get('/', (req, res) => {
-  res.status(200).json({ message: 'lalala' })
-})
-
-router.post('/', (req, res) => {
-  res.status(200).json({ message: 'lalala' })
-})
-
-router.put('/:id', (req, res) => {
-  res.status(200).json({ message: 'lalala' })
-})
-
-router.delete('/:id', (req, res) => {
-  res.status(200).json({ message: 'lalala' })
-})
+router.route('/').get(getTransactions).post(setTransaction)
+router.route('/:id').delete(deleteTransaction).put(updateTransaction)
 
 module.exports = router
