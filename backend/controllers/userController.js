@@ -7,7 +7,7 @@ const User = require('../models/userModel')
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body
+  const { email, password } = req.body
 
   if (!email || !password) {
     res.status(400)
@@ -28,7 +28,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // Create user
   const user = await User.create({
-    name,
+    email,
     password: hashedPassword,
   })
 
@@ -69,7 +69,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-  // res.status(200).json(req.user)
+  res.status(200).json(req.user)
 })
 
 // Generate JWT
