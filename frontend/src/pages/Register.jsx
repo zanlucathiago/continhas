@@ -14,7 +14,7 @@ import { useState } from 'react'
 import authService from '../features/auth/authService'
 
 function Register () {
-  const [toast, setToast] = useState(null)
+  const [toast, setToast] = useState('')
 
   const [formData, setFormData] = useState({
     email: '',
@@ -34,10 +34,7 @@ function Register () {
 
   const handleClick = async () => {
     if (password !== password2) {
-      setToast({
-        alert: 'As senhas são diferentes',
-        severity: 'error'
-      })
+      setToast('As senhas são diferentes')
     } else {
       setLoading(true)
       try {
@@ -45,16 +42,13 @@ function Register () {
         navigate('/')
       } catch (error) {
         setLoading(false)
-        setToast({
-          severity: 'error',
-          alert: error.response.data.message,
-        })
+        setToast(error.response.data.message)
       }
     }
   }
 
   const handleClose = () => {
-    setToast(null)
+    setToast('')
   }
 
   return (
@@ -64,17 +58,15 @@ function Register () {
         autoHideDuration={1414}
         onClose={handleClose}
       >
-        {toast && (
-          <Alert
-            elevation={6}
-            onClose={handleClose}
-            severity={toast.severity}
-            sx={{ width: '100%' }}
-            variant='filled'
-          >
-            {toast.alert}
-          </Alert>
-        )}
+        <Alert
+          elevation={6}
+          onClose={handleClose}
+          severity='error'
+          sx={{ width: '100%' }}
+          variant='filled'
+        >
+          {toast}
+        </Alert>
       </Snackbar>
       <Stack
         direction='row'

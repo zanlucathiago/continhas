@@ -1,19 +1,68 @@
-import SendIcon from '@mui/icons-material/Send';
+import { useNavigate } from 'react-router-dom'
+import SendIcon from '@mui/icons-material/Send'
 import LoadingButton from '@mui/lab/LoadingButton'
 import PersonIcon from '@mui/icons-material/Person'
-import { Box, Stack, TextField, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
+import authService from '../features/auth/authService'
 
 function Login () {
+  const [toast, setToast] = useState(null)
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  })
+
   const [loading, setLoading] = useState(false)
 
-  const handleClick = () => {
+  const navigate = useNavigate()
+
+  const onChange = property => ({ target: { value } }) => {
+    setFormData({ ...formData, [property]: value })
+  }
+
+  const { email, password } = formData
+
+  const handleClick = async () => {
     setLoading(true)
-    setTimeout(() => setLoading(false), 1414)
+    try {
+      await authService.login({ email, password })
+      navigate('/')
+    } catch (error) {
+      setLoading(false)
+      setToast(error.response.data.message)
+    }
+  }
+
+  const handleClose = () => {
+    setToast('')
   }
 
   return (
     <>
+      <Snackbar
+        open={Boolean(toast)}
+        autoHideDuration={1414}
+        onClose={handleClose}
+      >
+        <Alert
+          elevation={6}
+          onClose={handleClose}
+          severity='error'
+          sx={{ width: '100%' }}
+          variant='filled'
+        >
+          {toast}
+        </Alert>
+      </Snackbar>
       <Stack
         direction='row'
         justifyContent='center'
@@ -35,8 +84,20 @@ function Login () {
         style={{ display: 'flex', justifyContent: 'center' }}
       >
         <Stack spacing={2} alignItems='center'>
-          <TextField label='Nome' />
-          <TextField label='Senha' type='password' />
+          <TextField
+            disabled={loading}
+            label='E-mail'
+            type='email'
+            value={email}
+            onChange={onChange('email')}
+          />
+          <TextField
+            disabled={loading}
+            label='Senha'
+            onChange={onChange('password')}
+            type='password'
+            value={password}
+          />
           <LoadingButton
             fullWidth
             onClick={handleClick}
