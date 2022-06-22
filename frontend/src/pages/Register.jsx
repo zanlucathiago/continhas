@@ -1,19 +1,81 @@
+import { useNavigate } from 'react-router-dom'
 import LoadingButton from '@mui/lab/LoadingButton'
 import SaveIcon from '@mui/icons-material/Save'
 import PersonIcon from '@mui/icons-material/Person'
-import { Box, Stack, TextField, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
+import authService from '../features/auth/authService'
 
 function Register () {
+  const [toast, setToast] = useState(null)
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    password2: ''
+  })
+
   const [loading, setLoading] = useState(false)
 
-  const handleClick = () => {
-    setLoading(true)
-    setTimeout(() => setLoading(false), 1414)
+  const navigate = useNavigate()
+
+  const onChange = property => ({ target: { value } }) => {
+    setFormData({ ...formData, [property]: value })
+  }
+
+  const { email, password, password2 } = formData
+
+  const handleClick = async () => {
+    if (password !== password2) {
+      setToast({
+        alert: 'As senhas são diferentes',
+        severity: 'error'
+      })
+    } else {
+      setLoading(true)
+      try {
+        await authService.register({ email, password })
+        navigate('/')
+      } catch (error) {
+        setLoading(false)
+        setToast({
+          severity: 'error',
+          alert: error.response.data.message,
+        })
+      }
+    }
+  }
+
+  const handleClose = () => {
+    setToast(null)
   }
 
   return (
     <>
+      <Snackbar
+        open={Boolean(toast)}
+        autoHideDuration={1414}
+        onClose={handleClose}
+      >
+        {toast && (
+          <Alert
+            elevation={6}
+            onClose={handleClose}
+            severity={toast.severity}
+            sx={{ width: '100%' }}
+            variant='filled'
+          >
+            {toast.alert}
+          </Alert>
+        )}
+      </Snackbar>
       <Stack
         direction='row'
         justifyContent='center'
@@ -35,9 +97,27 @@ function Register () {
         style={{ display: 'flex', justifyContent: 'center' }}
       >
         <Stack spacing={2} alignItems='center'>
-          <TextField label='Nome' />
-          <TextField label='Senha' type='password' />
-          <TextField label='Confirmação da senha' type='password' />
+          <TextField
+            disabled={loading}
+            label='E-mail'
+            type='email'
+            value={email}
+            onChange={onChange('email')}
+          />
+          <TextField
+            disabled={loading}
+            label='Senha'
+            onChange={onChange('password')}
+            type='password'
+            value={password}
+          />
+          <TextField
+            disabled={loading}
+            label='Confirmação da senha'
+            onChange={onChange('password2')}
+            type='password'
+            value={password2}
+          />
           <LoadingButton
             fullWidth
             onClick={handleClick}
