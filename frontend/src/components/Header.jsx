@@ -3,7 +3,6 @@ import LoginIcon from '@mui/icons-material/Login'
 import {
   AppBar,
   Box,
-  Link,
   List,
   ListItem,
   ListItemButton,
@@ -17,13 +16,13 @@ function Header () {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position='static'>
         <Toolbar>
-          <Box sx={{ flexGrow: 1, display: 'flex' }}>
-            <Link color='inherit' href='/' underline='none'>
-              GoalSetter
-            </Link>
-          </Box>
-          <List style={{ display: 'flex' }}>
+          <List style={{ display: 'flex', width: '100%' }}>
             <ListItem>
+              <ListItemButton component='a' href='/'>
+                <ListItemText primary='Início' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem style={{ flex: 1 }}>
               <ListItemButton component='a' href='/login'>
                 <ListItemIcon
                   style={{ color: 'inherit', justifyContent: 'space-around' }}
@@ -33,7 +32,7 @@ function Header () {
                 <ListItemText primary='Entrar' />
               </ListItemButton>
             </ListItem>
-            <ListItem>
+            <ListItem style={{ flex: 1 }}>
               <ListItemButton component='a' href='/register'>
                 <ListItemIcon
                   style={{ color: 'inherit', justifyContent: 'space-around' }}
