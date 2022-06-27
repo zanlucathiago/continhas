@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+axios.interceptors.request.use(async (config) => new Promise(resolve => setTimeout(() => resolve(config), 1414)))
+
 const getToken = () => {
   // Get user from localStorage
   const user = JSON.parse(localStorage.getItem('user'))

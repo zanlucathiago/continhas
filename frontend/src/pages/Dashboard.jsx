@@ -18,21 +18,27 @@ export default function Dashboard () {
     setSaving(true)
     transactionService
       .createTransaction({ description: newDescription })
-      .then(() => {
-        setSaving(false)
-        setDrawerOpen(false)
-        setTransactions(null)
-        fetchTransactions()
-      })
+      .then(onCreate)
+      .catch(stopSaving)
+  }
+
+  const stopSaving = () => {
+    setSaving(false)
+  }
+
+  const onCreate = () => {
+    setNewDescription('')
+    setSaving(false)
+    setDrawerOpen(false)
+    setTransactions(null)
+    fetchTransactions()
   }
 
   const fetchTransactions = () => {
     transactionService.getTransactions().then(setTransactions)
   }
 
-  useEffect(() => {
-    fetchTransactions()
-  }, [])
+  useEffect(fetchTransactions, [])
 
   const toggleDrawer = open => () => {
     setDrawerOpen(open)
@@ -80,7 +86,7 @@ export default function Dashboard () {
         <AddIcon />
       </Fab>
       <Drawer anchor='bottom' open={drawerOpen} onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 'auto', p: 2 }} role='presentation'>
+        <Box component='form' sx={{ width: 'auto', p: 2 }} role='presentation'>
           <Stack spacing={2}>
             <TextField
               label='Nova despesa'
@@ -88,6 +94,7 @@ export default function Dashboard () {
               inputRef={drawerInput}
             />
             <LoadingButton
+              disabled={Boolean(!newDescription)}
               onClick={handleClick}
               loading={saving}
               loadingPosition='start'

@@ -25,7 +25,14 @@ export default function Transaction ({ _id, defaultDescription, onDelete }) {
 
   const handleDelete = () => {
     setDeleting(true)
-    transactionService.deleteTransaction(_id).then(onDelete)
+    transactionService
+      .deleteTransaction(_id)
+      .then(onDelete)
+      .catch(stopDeleting)
+  }
+
+  const stopDeleting = () => {
+    setDeleting(false)
   }
 
   const handleOpen = () => {
