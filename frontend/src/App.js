@@ -19,15 +19,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Container>
-          <Stack spacing={2}>
-            <Routes>
-              <Route path='/' element={<Dashboard />} />
-              <Route path='/login' element={<Login />} />
-              <Route path='/register' element={<Register />} />
-            </Routes>
-          </Stack>
-        </Container>
+        <Stack spacing={2}>
+          <Routes>
+            <Route path='/' element={<Dashboard />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+          </Routes>
+        </Stack>
       </Router>
     </ThemeProvider>
   )
