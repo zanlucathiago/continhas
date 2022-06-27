@@ -1,8 +1,9 @@
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save'
 import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 import { useEffect, useRef, useState } from 'react'
-import { Box, Drawer, List, Stack, TextField } from '@mui/material'
+import { AppBar, Box, Drawer, IconButton, List, Menu, Skeleton, Stack, TextField, Toolbar, Typography } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import transactionService from '../features/transaction/transactionService'
 import Transaction from '../components/Transaction'
@@ -60,7 +61,55 @@ export default function Dashboard () {
 
   return (
     <>
-      {transactions && (
+      <AppBar position='static'>
+        <Toolbar>
+          {/* <IconButton
+            size='large'
+            edge='start'
+            color='inherit'
+            aria-label='menu'
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton> */}
+          <Typography variant='h6' component='div' sx={{ flexGrow: 1, textAlign: 'center' }}>
+            Photos
+          </Typography>
+          {/* {auth && ( */}
+          {/* <div> */}
+          <IconButton
+            size='large'
+            aria-label='account of current user'
+            aria-controls='menu-appbar'
+            aria-haspopup='true'
+            // onClick={handleMenu}
+            color='inherit'
+          >
+            <AccountCircle />
+          </IconButton>
+          <Menu
+            id='menu-appbar'
+            // anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            // open={Boolean(anchorEl)}
+            // onClose={handleClose}
+          >
+            {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
+            {/* <MenuItem onClick={handleClose}>My account</MenuItem> */}
+          </Menu>
+          {/* </div> */}
+          {/* )} */}
+        </Toolbar>
+      </AppBar>
+      {transactions ? (
         <List>
           {transactions.map(({ _id, description }) => (
             <Transaction
@@ -71,6 +120,8 @@ export default function Dashboard () {
             />
           ))}
         </List>
+      ) : (
+        Array(4).fill(<Skeleton height={41} />)
       )}
       <Fab
         color='primary'
