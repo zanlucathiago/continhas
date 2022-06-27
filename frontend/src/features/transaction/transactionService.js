@@ -47,10 +47,24 @@ const deleteTransaction = async (transactionId) => {
   return response.data
 }
 
+// Update user transaction
+const updateTransaction = async (transactionId, transactionData) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  }
+
+  const response = await axios.put(API_URL + transactionId, transactionData, config)
+
+  return response.data
+}
+
 const transactionService = {
   createTransaction,
   getTransactions,
   deleteTransaction,
+  updateTransaction,
 }
 
 export default transactionService

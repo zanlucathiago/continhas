@@ -46,12 +46,23 @@ export default function Dashboard () {
     drawerInput.current?.focus()
   }
 
+  const handleDelete = _id => () => {
+    setTransactions(transactions.filter(isNot(_id)))
+  }
+
+  const isNot = _id => transaction => transaction._id !== _id
+
   return (
     <>
       {transactions && (
         <List>
           {transactions.map(({ _id, description }) => (
-            <Transaction key={_id} _id={_id} description={description} />
+            <Transaction
+              key={_id}
+              _id={_id}
+              defaultDescription={description}
+              onDelete={handleDelete(_id)}
+            />
           ))}
         </List>
       )}
@@ -75,7 +86,6 @@ export default function Dashboard () {
               label='Nova despesa'
               onChange={handleChange}
               inputRef={drawerInput}
-              value={newDescription}
             />
             <LoadingButton
               onClick={handleClick}

@@ -2,15 +2,19 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import transactionService from '../features/transaction/transactionService'
 import {
+  Box,
   Drawer,
   IconButton,
   ListItem,
   ListItemButton,
-  Stack
+  Stack,
+  TextField
 } from '@mui/material'
 import { useState } from 'react'
 
-export default function Transaction ({ _id, description }) {
+export default function Transaction ({ _id, defaultDescription, onDelete }) {
+  const [description, setDescription] = useState(defaultDescription)
+  const [timer, setTimer] = useState(null)
   const [open, setOpen] = useState(false)
 
   const [deleting, setDeleting] = useState(false)
@@ -21,16 +25,21 @@ export default function Transaction ({ _id, description }) {
 
   const handleDelete = () => {
     setDeleting(true)
-    transactionService.deleteTransaction(_id).then(onDeleted)
-  }
-
-  const onDeleted = () => {
-    setDeleting(false)
-    handleClose()
+    transactionService.deleteTransaction(_id).then(onDelete)
   }
 
   const handleOpen = () => {
     setOpen(true)
+  }
+
+  const handleChange = ({ target: { value } }) => {
+    setDescription(value)
+    clearTimeout(timer)
+    setTimer(setTimeout(update(value), 3000))
+  }
+
+  const update = value => () => {
+    transactionService.updateTransaction(_id, { description: value })
   }
 
   return (
@@ -47,7 +56,14 @@ export default function Transaction ({ _id, description }) {
             <DeleteIcon />
           </IconButton>
         </Stack>
-        {description}
+        <Box sx={{ p: 2 }}>
+          <TextField
+            label='Descrição'
+            onChange={handleChange}
+            style={{ width: '100%' }}
+            value={description}
+          />
+        </Box>
       </Drawer>
     </>
   )
