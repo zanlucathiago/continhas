@@ -1,6 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import transactionService from '../features/transaction/transactionService'
 import {
   Box,
   Drawer,
@@ -10,9 +9,11 @@ import {
   Stack,
   TextField
 } from '@mui/material'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import AuthContext from '../context/AuthContext'
 
 export default function Transaction ({ _id, defaultDescription, onDelete }) {
+  const { deleteTransaction, updateTransaction } = useContext(AuthContext)
   const [description, setDescription] = useState(defaultDescription)
   const [timer, setTimer] = useState(null)
   const [open, setOpen] = useState(false)
@@ -25,8 +26,7 @@ export default function Transaction ({ _id, defaultDescription, onDelete }) {
 
   const handleDelete = () => {
     setDeleting(true)
-    transactionService
-      .deleteTransaction(_id)
+    deleteTransaction(_id)
       .then(onDelete)
       .catch(stopDeleting)
   }
@@ -46,7 +46,7 @@ export default function Transaction ({ _id, defaultDescription, onDelete }) {
   }
 
   const update = value => () => {
-    transactionService.updateTransaction(_id, { description: value })
+    updateTransaction(_id, { description: value })
   }
 
   return (

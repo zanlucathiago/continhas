@@ -4,12 +4,11 @@ import AddIcon from '@mui/icons-material/Add'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Box, Drawer, List, Skeleton, Stack, TextField } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
-import transactionService from '../features/transaction/transactionService'
 import Transaction from '../components/Transaction'
 import AuthContext from '../context/AuthContext'
 
 export default function Dashboard () {
-  const { getTransactions } = useContext(AuthContext)
+  const { createTransaction, getTransactions } = useContext(AuthContext)
   const drawerInput = useRef()
   const [transactions, setTransactions] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -18,8 +17,7 @@ export default function Dashboard () {
 
   const handleClick = () => {
     setSaving(true)
-    transactionService
-      .createTransaction({ description: newDescription })
+    createTransaction({ description: newDescription })
       .then(onCreate)
       .catch(stopSaving)
   }
@@ -40,7 +38,7 @@ export default function Dashboard () {
     getTransactions().then(setTransactions)
   }
 
-  useEffect(fetchTransactions, [])
+  useEffect(fetchTransactions, [fetchTransactions])
 
   const toggleDrawer = open => () => {
     setDrawerOpen(open)

@@ -1,19 +1,20 @@
-import { useNavigate } from 'react-router-dom'
 import LoadingButton from '@mui/lab/LoadingButton'
-import SaveIcon from '@mui/icons-material/Save'
 import PersonIcon from '@mui/icons-material/Person'
 import {
   Alert,
   Box,
+  Button,
+  Grid,
   Snackbar,
   Stack,
   TextField,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
-import authService from '../features/auth/authService'
+import { useContext, useState } from 'react'
+import UserContext from '../context/UserContext'
 
 function Register () {
+  const { register } = useContext(UserContext)
   const [toast, setToast] = useState('')
 
   const [formData, setFormData] = useState({
@@ -24,27 +25,24 @@ function Register () {
 
   const [loading, setLoading] = useState(false)
 
-  const navigate = useNavigate()
-
   const onChange = property => ({ target: { value } }) => {
     setFormData({ ...formData, [property]: value })
   }
 
   const { email, password, password2 } = formData
 
-  const handleClick = async () => {
+  const handleClick = () => {
     if (password !== password2) {
       setToast('As senhas são diferentes')
     } else {
       setLoading(true)
-      try {
-        await authService.register({ email, password })
-        navigate('/')
-      } catch (error) {
-        setLoading(false)
-        setToast(error.response.data.message)
-      }
+      register({ email, password }).catch(handleRegisterError)
     }
+  }
+
+  const handleRegisterError = error => {
+    setLoading(false)
+    setToast(error.response.data.message)
   }
 
   const handleClose = () => {
@@ -79,16 +77,8 @@ function Register () {
           Crie uma conta
         </Typography>
       </Stack>
-      <Box
-        component='form'
-        sx={{
-          '& > :not(style)': { m: 1, width: '25ch' }
-        }}
-        noValidate
-        autoComplete='off'
-        style={{ display: 'flex', justifyContent: 'center' }}
-      >
-        <Stack spacing={2} alignItems='center'>
+      <Box component='form' noValidate autoComplete='off' sx={{ p: 2 }}>
+        <Stack spacing={2}>
           <TextField
             disabled={loading}
             label='E-mail'
@@ -110,17 +100,26 @@ function Register () {
             type='password'
             value={password2}
           />
-          <LoadingButton
-            fullWidth
-            onClick={handleClick}
-            loading={loading}
-            loadingPosition='start'
-            startIcon={<SaveIcon />}
-            variant='contained'
-          >
-            Salvar
-          </LoadingButton>
         </Stack>
+        <Box sx={{ mt: 2 }}>
+          <Grid container spacing={2} direction='row'>
+            <Grid item xs={6}>
+              <Button component='a' href='/login' style={{ width: '100%' }}>
+                Fazer login
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <LoadingButton
+                fullWidth
+                onClick={handleClick}
+                loading={loading}
+                variant='contained'
+              >
+                Salvar
+              </LoadingButton>
+            </Grid>
+          </Grid>
+        </Box>
       </Box>
     </>
   )

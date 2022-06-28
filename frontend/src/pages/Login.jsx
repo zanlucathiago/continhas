@@ -4,6 +4,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import {
   Alert,
   Box,
+  Button,
   Snackbar,
   Stack,
   TextField,
@@ -95,16 +96,21 @@ function Login () {
             type='password'
             value={password}
           />
-          <LoadingButton
-            fullWidth
-            onClick={handleClick}
-            loading={loading}
-            loadingPosition='start'
-            startIcon={<SendIcon />}
-            variant='contained'
-          >
-            Entrar
-          </LoadingButton>
+          <Stack>
+            <Button component='a' href='/register'>
+              Criar conta
+            </Button>
+            <LoadingButton
+              fullWidth
+              onClick={handleClick}
+              loading={loading}
+              loadingPosition='start'
+              startIcon={<SendIcon />}
+              variant='contained'
+            >
+              Entrar
+            </LoadingButton>
+          </Stack>
         </Stack>
       </Box>
     </>
