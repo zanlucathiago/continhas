@@ -1,12 +1,14 @@
+import { UserProvider } from './context/UserContext'
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './index.css'
-import Container from '@mui/material/Container';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import { Stack } from '@mui/material';
+import PublicRoute from './components/PublicRoute';
+import PrivateRoute from './components/PrivateRoute';
 
 const theme = createTheme({
   palette: {
@@ -18,15 +20,17 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Stack spacing={2}>
-          <Routes>
-            <Route path='/' element={<Dashboard />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
-          </Routes>
-        </Stack>
-      </Router>
+      <UserProvider>
+        <Router>
+          <Stack spacing={2}>
+            <Routes>
+              <Route path='/' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+              <Route path='/login' element={<PublicRoute><Login /></PublicRoute>} />
+              <Route path='/register' element={<PublicRoute><Register /></PublicRoute>} />
+            </Routes>
+          </Stack>
+        </Router>
+      </UserProvider>
     </ThemeProvider>
   )
 }

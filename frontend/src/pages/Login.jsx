@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import SendIcon from '@mui/icons-material/Send'
 import LoadingButton from '@mui/lab/LoadingButton'
 import PersonIcon from '@mui/icons-material/Person'
@@ -10,10 +9,11 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
-import authService from '../features/auth/authService'
+import { useContext, useState } from 'react'
+import UserContext from '../context/UserContext'
 
 function Login () {
+  const { login } = useContext(UserContext)
   const [toast, setToast] = useState(null)
 
   const [formData, setFormData] = useState({
@@ -23,23 +23,20 @@ function Login () {
 
   const [loading, setLoading] = useState(false)
 
-  const navigate = useNavigate()
-
   const onChange = property => ({ target: { value } }) => {
     setFormData({ ...formData, [property]: value })
   }
 
   const { email, password } = formData
 
-  const handleClick = async () => {
+  const handleClick = () => {
     setLoading(true)
-    try {
-      await authService.login({ email, password })
-      navigate('/')
-    } catch (error) {
-      setLoading(false)
-      setToast(error.response.data.message)
-    }
+    login({ email, password }).catch(handleLoginError)
+  }
+
+  const handleLoginError = error => {
+    setLoading(false)
+    setToast(error.response.data.message)
   }
 
   const handleClose = () => {

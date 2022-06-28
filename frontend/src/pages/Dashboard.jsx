@@ -1,29 +1,15 @@
-import AccountCircle from '@mui/icons-material/AccountCircle'
 import SaveIcon from '@mui/icons-material/Save'
 import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
-import { useEffect, useRef, useState } from 'react'
-import {
-  AppBar,
-  Box,
-  Drawer,
-  IconButton,
-  List,
-  Menu,
-  MenuItem,
-  Skeleton,
-  Stack,
-  TextField,
-  Toolbar,
-  Typography
-} from '@mui/material'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { Box, Drawer, List, Skeleton, Stack, TextField } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import transactionService from '../features/transaction/transactionService'
 import Transaction from '../components/Transaction'
-import authService from '../features/auth/authService'
+import AuthContext from '../context/AuthContext'
 
 export default function Dashboard () {
-  const [anchorEl, setAnchorEl] = useState(null)
+  const { getTransactions } = useContext(AuthContext)
   const drawerInput = useRef()
   const [transactions, setTransactions] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -51,7 +37,7 @@ export default function Dashboard () {
   }
 
   const fetchTransactions = () => {
-    transactionService.getTransactions().then(setTransactions)
+    getTransactions().then(setTransactions)
   }
 
   useEffect(fetchTransactions, [])
@@ -74,41 +60,8 @@ export default function Dashboard () {
 
   const isNot = _id => transaction => transaction._id !== _id
 
-  const handleMenu = ({ currentTarget }) => {
-    setAnchorEl(currentTarget)
-  }
-
   return (
     <>
-      <AppBar position='static'>
-        <Toolbar>
-          <Typography
-            variant='h6'
-            component='div'
-            sx={{ flexGrow: 1, textAlign: 'center' }}
-          >
-            Continhas
-          </Typography>
-          <IconButton onClick={handleMenu}>
-            <AccountCircle />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}
-            open={Boolean(anchorEl)}
-          >
-            <MenuItem onClick={authService.logout}>Sair</MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
       {transactions ? (
         <List>
           {transactions.map(({ _id, description }) => (

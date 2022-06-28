@@ -1,51 +1,19 @@
-import PersonIcon from '@mui/icons-material/Person'
-import LoginIcon from '@mui/icons-material/Login'
-import {
-  AppBar,
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar
-} from '@mui/material'
+import { AppBar, Toolbar, Typography } from '@mui/material'
 
-function Header () {
+function Header ({ children }) {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='static'>
-        <Toolbar>
-          <List style={{ display: 'flex', width: '100%' }}>
-            <ListItem>
-              <ListItemButton component='a' href='/'>
-                <ListItemText primary='Início' />
-              </ListItemButton>
-            </ListItem>
-            <ListItem style={{ flex: 1 }}>
-              <ListItemButton component='a' href='/login'>
-                <ListItemIcon
-                  style={{ color: 'inherit', justifyContent: 'space-around' }}
-                >
-                  <LoginIcon />
-                </ListItemIcon>
-                <ListItemText primary='Entrar' />
-              </ListItemButton>
-            </ListItem>
-            <ListItem style={{ flex: 1 }}>
-              <ListItemButton component='a' href='/register'>
-                <ListItemIcon
-                  style={{ color: 'inherit', justifyContent: 'space-around' }}
-                >
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary='Registrar' />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <AppBar position='static'>
+      <Toolbar>
+        <Typography
+          variant='h6'
+          component='div'
+          sx={{ flexGrow: 1, textAlign: 'center' }}
+        >
+          Continhas
+        </Typography>
+        {children}
+      </Toolbar>
+    </AppBar>
   )
 }
 
