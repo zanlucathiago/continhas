@@ -47,14 +47,18 @@ const TRANSACTION_MAPPER = {
   'Depósito Recebido por Boleto': {
     label: 'Depósito recebido',
     icon: ICON_MAPPER.DEFAULT_RECEIVED
-  }
+  },
+  'Transferência recebida pelo Pix': {
+    label: 'Transferência recebida',
+    icon: ICON_MAPPER.DEFAULT_RECEIVED
+  },
 }
 
 const formatTransaction = ({ _id, description, value }) => {
   const [primary, secondary] = description.split(DESCRIPTION_SEPARATOR);
   return {
     _id,
-    value: value.toLocaleString('pt-br', {
+    value: Math.abs(value).toLocaleString('pt-br', {
       style: 'currency',
       currency: 'BRL',
     }),

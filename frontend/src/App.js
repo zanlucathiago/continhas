@@ -7,8 +7,8 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import { Stack } from '@mui/material';
-import PublicRoute from './components/PublicRoute';
-import PrivateRoute from './components/PrivateRoute';
+import PublicRoute from './pages/PublicRoute';
+import PrivateRoute from './pages/PrivateRoute';
 
 const theme = createTheme({
   palette: {
