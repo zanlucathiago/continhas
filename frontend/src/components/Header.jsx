@@ -2,7 +2,7 @@ import { AppBar, Toolbar, Typography } from '@mui/material'
 
 function Header ({ children }) {
   return (
-    <AppBar position='static'>
+    <AppBar position='sticky'>
       <Toolbar>
         <Typography
           variant='h6'

@@ -9,12 +9,28 @@ const transactionSchema = mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, 'Por favor adicione uma descrição'],
     },
+    date: {
+      type: Date,
+      required: [true, 'Por favor insira uma data'],
+    },
+    identifier: {
+      type: String,
+      unique: [true, 'Extrato já foi importado anteriormente'],
+      required: [true, 'Por favor insira um identificador'],
+    },
+    value: {
+      type: Number,
+      required: [true, 'Por favor insira um valor'],
+    }
   },
   {
     timestamps: true,
   }
 )
 
-module.exports = mongoose.model('Transaction', transactionSchema)
+const TransactionModel = mongoose.model('Transaction', transactionSchema)
+
+TransactionModel.createIndexes()
+
+module.exports = TransactionModel

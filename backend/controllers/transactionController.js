@@ -1,15 +1,95 @@
+const moment = require('moment')
+moment.locale('pt-br');
 const asyncHandler = require('express-async-handler')
 
 const Transaction = require('../models/transactionModel')
-const User = require('../models/userModel')
+
+const DESCRIPTION_SEPARATOR = ' - ';
+
+const ICON_MAPPER = {
+  DEFAULT_CARD: 'CreditCard',
+  DEFAULT_RECEIVED: 'ArrowDownward',
+  SAVED_MONEY: 'Savings',
+  PAYMENT_MADE: 'QrCode2',
+  SENT_TRANSFER: 'ArrowUpward',
+  ACCOUNT_CREDIT: 'KeyboardReturn',
+}
+
+const TRANSACTION_MAPPER = {
+  'Compra no débito': {
+    label: 'Compra no débito',
+    icon: ICON_MAPPER.DEFAULT_CARD
+  },
+  'Dinheiro guardado com resgate planejado': {
+    label: 'Dinheiro guardado',
+    icon: ICON_MAPPER.SAVED_MONEY,
+  },
+  'Pagamento da fatura': {
+    label: 'Pagamento da fatura',
+    icon: ICON_MAPPER.DEFAULT_CARD
+  },
+  'Transferência Recebida': {
+    label: 'Transferẽncia recebida',
+    icon: ICON_MAPPER.DEFAULT_RECEIVED
+  },
+  'Pagamento de boleto efetuado': {
+    label: 'Pagamento efetuado',
+    icon: ICON_MAPPER.PAYMENT_MADE
+  },
+  'Transferência enviada pelo Pix': {
+    label: 'Transferência enviada',
+    icon: ICON_MAPPER.SENT_TRANSFER,
+  },
+  'Crédito em conta': {
+    label: 'Estorno de débito',
+    icon: ICON_MAPPER.ACCOUNT_CREDIT,
+  },
+  'Depósito Recebido por Boleto': {
+    label: 'Depósito recebido',
+    icon: ICON_MAPPER.DEFAULT_RECEIVED
+  }
+}
+
+const formatTransaction = ({ _id, description, value }) => {
+  const [primary, secondary] = description.split(DESCRIPTION_SEPARATOR);
+  return {
+    _id,
+    value: value.toLocaleString('pt-br', {
+      style: 'currency',
+      currency: 'BRL',
+    }),
+    isCredit: value > 0,
+    ...(TRANSACTION_MAPPER[primary]),
+    secondary,
+  }
+}
+
+const formatGroups = ({
+  _id,
+  transactions,
+}) => ({
+  date: moment.utc(_id).format('ddd[, ]D[ de ]MMM[ de ]YYYY').toUpperCase(),
+  transactions: transactions.map(formatTransaction),
+})
 
 // @desc    Get transactions
 // @route   GET /api/transactions
 // @access  Private
-const getTransactions = asyncHandler(async (req, res) => {
-  const transactions = await Transaction.find({ user: req.user.id })
+const getTransactions = asyncHandler(async (_req, res) => {
+  const grouped = await Transaction.aggregate([{
+    $group: {
+      _id: "$date",
+      transactions: {
+        $push: '$$ROOT',
+      },
+    },
+  }, {
+    $sort: {
+      _id: -1,
+    },
+  }])
 
-  res.status(200).json(transactions)
+  res.status(200).json(grouped.map(formatGroups))
 })
 
 // @desc    Set transaction

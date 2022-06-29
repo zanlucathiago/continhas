@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.interceptors.request.use(async (config) => new Promise(resolve => setTimeout(() => resolve(config), Math.random() * 4000)))
+axios.interceptors.response.use(async (config) => new Promise(resolve => setTimeout(() => resolve(config), Math.random() * 4000)))
 
 const API_URL = '/api/transactions/'
 

@@ -1,3 +1,4 @@
+import icons from '../icons'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
@@ -6,13 +7,27 @@ import {
   IconButton,
   ListItem,
   ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Stack,
-  TextField
+  SvgIcon,
+  TextField,
+  Typography
 } from '@mui/material'
 import { useContext, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 
-export default function Transaction ({ _id, defaultDescription, onDelete }) {
+export default function Transaction ({
+  _id,
+  defaultDescription,
+  icon,
+  isCredit,
+  onDelete,
+  primary,
+  secondary,
+  total
+}) {
+  const Icon = icons[icon]
   const { deleteTransaction, updateTransaction } = useContext(AuthContext)
   const [description, setDescription] = useState(defaultDescription)
   const [timer, setTimer] = useState(null)
@@ -51,8 +66,27 @@ export default function Transaction ({ _id, defaultDescription, onDelete }) {
 
   return (
     <>
-      <ListItem>
-        <ListItemButton onClick={handleOpen}>{description}</ListItemButton>
+      <ListItem disableGutters>
+        <ListItemButton onClick={handleOpen} sx={{ p: 0 }}>
+          <ListItemIcon style={{ minWidth: 40 }}>
+            <SvgIcon
+              component={Icon}
+              color={isCredit ? 'success' : 'inherit'}
+            />
+          </ListItemIcon>
+          <ListItemText
+            primary={primary}
+            primaryTypographyProps={{ noWrap: true }}
+            secondary={
+              <>
+                <Typography variant='body2' noWrap>
+                  {secondary}
+                </Typography>
+                <Typography variant='body2'>{total}</Typography>
+              </>
+            }
+          />
+        </ListItemButton>
       </ListItem>
       <Drawer open={open} PaperProps={{ style: { width: '100%' } }}>
         <Stack direction='row' justifyContent='space-between'>

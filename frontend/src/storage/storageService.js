@@ -1,7 +1,7 @@
 const STORAGE_KEY = 'user';
 
 const setUser = (data) => {
-  localStorage.setUser(STORAGE_KEY, JSON.stringify(data))
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
 }
 
 const getUser = () => {
@@ -13,8 +13,10 @@ const removeUser = () => {
   localStorage.removeItem(STORAGE_KEY)
 }
 
-export default {
+const storageService = {
   setUser,
   getUser,
   removeUser,
 }
+
+export default storageService

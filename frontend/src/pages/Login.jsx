@@ -1,10 +1,10 @@
-import SendIcon from '@mui/icons-material/Send'
 import LoadingButton from '@mui/lab/LoadingButton'
 import PersonIcon from '@mui/icons-material/Person'
 import {
   Alert,
   Box,
   Button,
+  Grid,
   Snackbar,
   Stack,
   TextField,
@@ -72,16 +72,8 @@ function Login () {
           Entre com sua conta
         </Typography>
       </Stack>
-      <Box
-        component='form'
-        sx={{
-          '& > :not(style)': { m: 1, width: '25ch' }
-        }}
-        noValidate
-        autoComplete='off'
-        style={{ display: 'flex', justifyContent: 'center' }}
-      >
-        <Stack spacing={2} alignItems='center'>
+      <Box component='form' noValidate autoComplete='off' sx={{ p: 2 }}>
+        <Stack spacing={2}>
           <TextField
             disabled={loading}
             label='E-mail'
@@ -96,22 +88,26 @@ function Login () {
             type='password'
             value={password}
           />
-          <Stack>
-            <Button component='a' href='/register'>
-              Criar conta
-            </Button>
-            <LoadingButton
-              fullWidth
-              onClick={handleClick}
-              loading={loading}
-              loadingPosition='start'
-              startIcon={<SendIcon />}
-              variant='contained'
-            >
-              Entrar
-            </LoadingButton>
-          </Stack>
         </Stack>
+        <Box sx={{ mt: 2 }}>
+          <Grid container spacing={2} direction='row'>
+            <Grid item xs={6}>
+              <Button component='a' href='/register' style={{ width: '100%' }}>
+                Criar conta
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <LoadingButton
+                fullWidth
+                onClick={handleClick}
+                loading={loading}
+                variant='contained'
+              >
+                Entrar
+              </LoadingButton>
+            </Grid>
+          </Grid>
+        </Box>
       </Box>
     </>
   )

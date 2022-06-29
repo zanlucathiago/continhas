@@ -1,16 +1,28 @@
+import FileUploadIcon from '@mui/icons-material/FileUpload'
 import SaveIcon from '@mui/icons-material/Save'
 import Fab from '@mui/material/Fab'
-import AddIcon from '@mui/icons-material/Add'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { Box, Drawer, List, Skeleton, Stack, TextField } from '@mui/material'
+import {
+  Box,
+  Drawer,
+  Input,
+  List,
+  Skeleton,
+  Stack,
+  TextField
+} from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Transaction from '../components/Transaction'
 import AuthContext from '../context/AuthContext'
+import TransactionGroup from './TransactionGroup'
 
 export default function Dashboard () {
-  const { createTransaction, getTransactions } = useContext(AuthContext)
+  const uploadInput = useRef()
+  const { createStatement, createTransaction, getTransactions } = useContext(
+    AuthContext
+  )
   const drawerInput = useRef()
-  const [transactions, setTransactions] = useState(null)
+  const [groups, setTransactions] = useState(null)
   const [saving, setSaving] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [newDescription, setNewDescription] = useState('')
@@ -38,7 +50,7 @@ export default function Dashboard () {
     getTransactions().then(setTransactions)
   }
 
-  useEffect(fetchTransactions, [fetchTransactions])
+  useEffect(fetchTransactions)
 
   const toggleDrawer = open => () => {
     setDrawerOpen(open)
@@ -48,44 +60,79 @@ export default function Dashboard () {
     setNewDescription(value)
   }
 
-  const handleFocus = () => {
-    drawerInput.current?.focus()
-  }
-
   const handleDelete = _id => () => {
-    setTransactions(transactions.filter(isNot(_id)))
+    setTransactions(groups.filter(isNot(_id)))
   }
 
   const isNot = _id => transaction => transaction._id !== _id
 
+  const handleClickUpload = () => {
+    uploadInput.current.click()
+  }
+
+  const handleChangeUpload = ({
+    target: {
+      files: [file]
+    }
+  }) => {
+    if (file) {
+      file.text().then(createStatement)
+    }
+  }
+
   return (
-    <>
-      {transactions ? (
-        <List>
-          {transactions.map(({ _id, description }) => (
-            <Transaction
-              key={_id}
-              _id={_id}
-              defaultDescription={description}
-              onDelete={handleDelete(_id)}
-            />
+    <Box sx={{ p: 2 }}>
+      {groups ? (
+        <List
+          dense
+          subheader={<li />}
+          sx={{
+            '& ul': { padding: 0 },
+            '& li': { padding: 0 }
+          }}
+        >
+          {groups.map(({ date, transactions }) => (
+            <TransactionGroup date={date}>
+              {transactions.map(
+                ({ icon, label, secondary, value, _id, isCredit }) => (
+                  <Transaction
+                    key={_id}
+                    _id={_id}
+                    icon={icon}
+                    primary={label}
+                    secondary={secondary}
+                    total={value}
+                    onDelete={handleDelete(_id)}
+                    isCredit={isCredit}
+                  />
+                )
+              )}
+            </TransactionGroup>
           ))}
         </List>
       ) : (
-        Array(4).fill(<Skeleton height={41} />)
+        Array(4)
+          .fill()
+          .map((_item, index) => <Skeleton height={41} key={index} />)
       )}
       <Fab
         color='primary'
-        onClick={toggleDrawer(true)}
+        onClick={handleClickUpload}
         style={{
-          position: 'absolute',
+          position: 'fixed',
           bottom: 16,
           left: '50%',
           transform: 'translate(-50%, 0)'
         }}
-        onFocus={handleFocus}
       >
-        <AddIcon />
+        <FileUploadIcon />
+        <Input
+          accept='text/csv'
+          inputRef={uploadInput}
+          onChange={handleChangeUpload}
+          type='file'
+          style={{ display: 'none' }}
+        />
       </Fab>
       <Drawer anchor='bottom' open={drawerOpen} onClose={toggleDrawer(false)}>
         <Box component='form' sx={{ width: 'auto', p: 2 }} role='presentation'>
@@ -108,6 +155,6 @@ export default function Dashboard () {
           </Stack>
         </Box>
       </Drawer>
-    </>
+    </Box>
   )
 }
