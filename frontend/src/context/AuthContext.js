@@ -1,22 +1,24 @@
-import { createContext, useContext } from "react"
-import transactionService from "../features/transaction/transactionService";
+import { createContext, useContext } from "react";
 import statementService from "../features/statement/statementService";
+import transactionService from "../features/transaction/transactionService";
+import AlertContext from "./AlertContext";
 import UserContext from "./UserContext";
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
+  const { handleCatch } = useContext(AlertContext)
   const { user: { token } } = useContext(UserContext)
 
   const getTransactions = transactionService.getTransactions(token)
 
-  const createTransaction = transactionService.createTransaction(token)
+  const createTransaction = handleCatch(transactionService.createTransaction(token))
 
-  const createStatement = statementService.createStatement(token)
+  const createStatement = handleCatch(statementService.createStatement(token))
 
-  const updateTransaction = transactionService.updateTransaction(token)
+  const updateTransaction = handleCatch(transactionService.updateTransaction(token))
 
-  const deleteTransaction = transactionService.deleteTransaction(token)
+  const deleteTransaction = handleCatch(transactionService.deleteTransaction(token))
 
   return (
     <AuthContext.Provider

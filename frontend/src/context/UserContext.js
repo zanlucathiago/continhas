@@ -1,20 +1,22 @@
-import { createContext, useState } from "react"
+import { createContext, useContext, useState } from "react";
 import authService from "../features/auth/authService";
 import storageService from "../storage/storageService";
+import AlertContext from "./AlertContext";
 
 const UserContext = createContext()
 
 export function UserProvider({ children }) {
+  const { handleCatch } = useContext(AlertContext)
   const [user, setUser] = useState(storageService.getUser())
 
-  const login = (userData) => authService.login(userData).then(handleLoginSuccess)
+  const login = handleCatch((userData) => authService.login(userData).then(handleLoginSuccess))
 
   const handleLoginSuccess = (data) => {
     setUser(data);
     storageService.setUser(data)
   }
 
-  const register = (userData) => authService.register(userData).then(handleLoginSuccess)
+  const register = handleCatch((userData) => authService.register(userData).then(handleLoginSuccess))
 
   const logout = () => {
     setUser(null);
