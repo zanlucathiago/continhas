@@ -1,21 +1,13 @@
-import LoadingButton from '@mui/lab/LoadingButton'
 import PersonIcon from '@mui/icons-material/Person'
-import {
-  Alert,
-  Box,
-  Button,
-  Grid,
-  Snackbar,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material'
 import { useContext, useState } from 'react'
+import AlertContext from '../context/AlertContext'
 import UserContext from '../context/UserContext'
 
 function Register () {
+  const { setToast } = useContext(AlertContext)
   const { register } = useContext(UserContext)
-  const [toast, setToast] = useState('')
 
   const [formData, setFormData] = useState({
     email: '',
@@ -36,36 +28,16 @@ function Register () {
       setToast('As senhas são diferentes')
     } else {
       setLoading(true)
-      register({ email, password }).catch(handleRegisterError)
+      register({ email, password }).catch(handleCatch)
     }
   }
 
-  const handleRegisterError = error => {
+  const handleCatch = () => {
     setLoading(false)
-    setToast(error.response.data.message)
-  }
-
-  const handleClose = () => {
-    setToast('')
   }
 
   return (
     <>
-      <Snackbar
-        open={Boolean(toast)}
-        autoHideDuration={1414}
-        onClose={handleClose}
-      >
-        <Alert
-          elevation={6}
-          onClose={handleClose}
-          severity='error'
-          sx={{ width: '100%' }}
-          variant='filled'
-        >
-          {toast}
-        </Alert>
-      </Snackbar>
       <Stack
         direction='row'
         justifyContent='center'

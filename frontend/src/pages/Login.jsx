@@ -1,21 +1,11 @@
-import LoadingButton from '@mui/lab/LoadingButton'
 import PersonIcon from '@mui/icons-material/Person'
-import {
-  Alert,
-  Box,
-  Button,
-  Grid,
-  Snackbar,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material'
 import { useContext, useState } from 'react'
 import UserContext from '../context/UserContext'
 
 function Login () {
   const { login } = useContext(UserContext)
-  const [toast, setToast] = useState(null)
 
   const [formData, setFormData] = useState({
     email: '',
@@ -35,32 +25,12 @@ function Login () {
     login({ email, password }).catch(handleLoginError)
   }
 
-  const handleLoginError = error => {
+  const handleLoginError = () => {
     setLoading(false)
-    setToast(error.response.data.message)
-  }
-
-  const handleClose = () => {
-    setToast('')
   }
 
   return (
     <>
-      <Snackbar
-        open={Boolean(toast)}
-        autoHideDuration={1414}
-        onClose={handleClose}
-      >
-        <Alert
-          elevation={6}
-          onClose={handleClose}
-          severity='error'
-          sx={{ width: '100%' }}
-          variant='filled'
-        >
-          {toast}
-        </Alert>
-      </Snackbar>
       <Stack
         direction='row'
         justifyContent='center'
