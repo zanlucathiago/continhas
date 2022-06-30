@@ -1,20 +1,18 @@
 import axios from 'axios'
 
-axios.interceptors.response.use(async (config) => new Promise(resolve => setTimeout(() => resolve(config), Math.random() * 4000)))
-
 const API_URL = '/api/transactions/'
 
 // Create new transaction
-const createTransaction = (token) => (transactionData) => axios.post(API_URL, transactionData, getConfig(token)).then(({ data }) => data)
+const createTransaction = (token) => (transactionData) => axios.post(API_URL, transactionData, getConfig(token))
 
 // Get user transactions
-const getTransactions = (token) => () => axios.get(API_URL, getConfig(token)).then(({ data }) => data)
+const getTransactions = (token) => () => axios.get(API_URL, getConfig(token))
 
 // Delete user transaction
-const deleteTransaction = (token) => (transactionId) => axios.delete(API_URL + transactionId, getConfig(token)).then(({ data }) => data)
+const deleteTransaction = (token) => (transactionId) => axios.delete(API_URL + transactionId, getConfig(token))
 
 // Update user transaction
-const updateTransaction = (token) => (transactionId, transactionData) => axios.put(API_URL + transactionId, transactionData, getConfig(token)).then(({ data }) => data)
+const updateTransaction = (token) => (transactionId, transactionData) => axios.put(API_URL + transactionId, transactionData, getConfig(token))
 
 const getConfig = (token) => ({
   headers: {

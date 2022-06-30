@@ -1,14 +1,15 @@
-import { UserProvider } from './context/UserContext'
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import './index.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Dashboard from './pages/Dashboard'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import { Stack } from '@mui/material';
-import PublicRoute from './pages/PublicRoute';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ErrorSnackbar from "./components/ErrorSnackbar";
+import { AlertProvider } from './context/AlertContext';
+import { UserProvider } from './context/UserContext';
+import './index.css';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
 import PrivateRoute from './pages/PrivateRoute';
+import PublicRoute from './pages/PublicRoute';
+import Register from './pages/Register';
 
 const theme = createTheme({
   palette: {
@@ -19,18 +20,19 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <UserProvider>
-        <Router>
-          <Stack spacing={2}>
+      <AlertProvider>
+        <ErrorSnackbar />
+        <CssBaseline />
+        <UserProvider>
+          <Router>
             <Routes>
               <Route path='/' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path='/login' element={<PublicRoute><Login /></PublicRoute>} />
               <Route path='/register' element={<PublicRoute><Register /></PublicRoute>} />
             </Routes>
-          </Stack>
-        </Router>
-      </UserProvider>
+          </Router>
+        </UserProvider>
+      </AlertProvider>
     </ThemeProvider>
   )
 }
