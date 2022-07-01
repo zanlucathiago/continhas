@@ -3,7 +3,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-axios.interceptors.response.use(({ data }) => data);
+const DEFAULT_TIMEOUT = process.env.NODE_ENV === 'development' ? 1414 : 0
+
+const handleTimeout = (data, callback) => () => callback(data)
+
+const promiseCallback = data => resolve => setTimeout(handleTimeout(data, resolve), DEFAULT_TIMEOUT)
+
+const handleResponse = ({ data }) => new Promise(promiseCallback(data))
+
+axios.interceptors.response.use(handleResponse);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

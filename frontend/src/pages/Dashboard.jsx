@@ -58,7 +58,10 @@ export default function Dashboard () {
           <Tab label='Minha conta' value={DEFAULT_ACCOUNT} />
           <Tab label='Cartão de crédito' value='CREDIT_CARD' />
         </Tabs>
-        <TransactionList key={String(listKey)} account={value} />
+        <TransactionList
+          key={`${String(listKey)}-${value}`}
+          account={value}
+        />
       </Stack>
       <Fab
         color='primary'

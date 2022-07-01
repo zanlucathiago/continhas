@@ -24,7 +24,7 @@ export default function TransactionList ({ account }) {
     setAlert(true)
   }
 
-  useEffect(fetchTransactions, [account])
+  useEffect(fetchTransactions, [])
 
   const handleDelete = _id => () => {
     setTransactions(groups.filter(isNot(_id)))
