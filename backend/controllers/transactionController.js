@@ -4,70 +4,17 @@ const asyncHandler = require('../middleware/asyncMiddleware');
 
 const Transaction = require('../models/transactionModel');
 const mongoose = require('mongoose');
+const { ACCOUNT_MAPPER } = require('../enums/account');
 
-const DESCRIPTION_SEPARATOR = ' - ';
-
-const ICON_MAPPER = {
-  DEFAULT_CARD: 'CreditCard',
-  DEFAULT_RECEIVED: 'ArrowDownward',
-  SAVED_MONEY: 'Savings',
-  PAYMENT_MADE: 'QrCode2',
-  SENT_TRANSFER: 'ArrowUpward',
-  ACCOUNT_CREDIT: 'KeyboardReturn',
-}
-
-const TRANSACTION_MAPPER = {
-  'Compra no débito': {
-    label: 'Compra no débito',
-    icon: ICON_MAPPER.DEFAULT_CARD
-  },
-  'Dinheiro guardado com resgate planejado': {
-    label: 'Dinheiro guardado',
-    icon: ICON_MAPPER.SAVED_MONEY,
-  },
-  'Pagamento da fatura': {
-    label: 'Pagamento da fatura',
-    icon: ICON_MAPPER.DEFAULT_CARD
-  },
-  'Transferência Recebida': {
-    label: 'Transferẽncia recebida',
-    icon: ICON_MAPPER.DEFAULT_RECEIVED
-  },
-  'Pagamento de boleto efetuado': {
-    label: 'Pagamento efetuado',
-    icon: ICON_MAPPER.PAYMENT_MADE
-  },
-  'Transferência enviada pelo Pix': {
-    label: 'Transferência enviada',
-    icon: ICON_MAPPER.SENT_TRANSFER,
-  },
-  'Crédito em conta': {
-    label: 'Estorno de débito',
-    icon: ICON_MAPPER.ACCOUNT_CREDIT,
-  },
-  'Depósito Recebido por Boleto': {
-    label: 'Depósito recebido',
-    icon: ICON_MAPPER.DEFAULT_RECEIVED
-  },
-  'Transferência recebida pelo Pix': {
-    label: 'Transferência recebida',
-    icon: ICON_MAPPER.DEFAULT_RECEIVED
-  },
-}
-
-const formatTransaction = ({ _id, description, value }) => {
-  const [primary, secondary] = description.split(DESCRIPTION_SEPARATOR);
-  return {
-    _id,
-    value: Math.abs(value).toLocaleString('pt-br', {
-      style: 'currency',
-      currency: 'BRL',
-    }),
-    isCredit: value > 0,
-    ...(TRANSACTION_MAPPER[primary]),
-    secondary,
-  }
-}
+const formatTransaction = ({ account, reference, _id, value }) => ({
+  ...ACCOUNT_MAPPER[account].formatter(reference.split(',')),
+  _id,
+  value: Math.abs(value).toLocaleString('pt-br', {
+    style: 'currency',
+    currency: 'BRL',
+  }),
+  isCredit: value > 0,
+})
 
 const formatGroups = ({
   _id,

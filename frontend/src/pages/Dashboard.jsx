@@ -52,39 +52,52 @@ export default function Dashboard () {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Stack spacing={2}>
-        <Tabs value={value} onChange={handleChange} variant='fullWidth'>
-          <Tab label='Minha conta' value={DEFAULT_ACCOUNT} />
-          <Tab label='Cartão de crédito' value='CREDIT_CARD' />
-        </Tabs>
-        <TransactionList
-          key={`${String(listKey)}-${value}`}
-          account={value}
-          onUpload={handleClickUpload}
-        />
-      </Stack>
-      <Fab
-        color='primary'
-        disabled={uploading}
-        onClick={handleClickUpload}
-        style={{
-          position: 'fixed',
-          bottom: 16,
-          left: '50%',
-          transform: 'translate(-50%, 0)'
+    <>
+      <Tabs
+        component={Box}
+        sx={{
+          position: 'sticky',
+          top: 56,
+          zIndex: 2,
+          bgcolor: 'background.default'
         }}
+        value={value}
+        onChange={handleChange}
+        variant='fullWidth'
       >
-        <FileUploadIcon />
-        <Input
-          accept='text/csv'
-          inputRef={uploadInput}
-          key={String(uploading)}
-          onChange={handleChangeUpload}
-          type='file'
-          style={{ display: 'none' }}
-        />
-      </Fab>
-    </Box>
+        <Tab label='Minha conta' value={DEFAULT_ACCOUNT} />
+        <Tab label='Cartão de crédito' value='CREDIT_CARD' />
+      </Tabs>
+      <Box sx={{ p: 2 }}>
+        <Stack spacing={2}>
+          <TransactionList
+            key={`${String(listKey)}-${value}`}
+            account={value}
+            onUpload={handleClickUpload}
+          />
+        </Stack>
+        <Fab
+          color='primary'
+          disabled={uploading}
+          onClick={handleClickUpload}
+          style={{
+            position: 'fixed',
+            bottom: 16,
+            left: '50%',
+            transform: 'translate(-50%, 0)'
+          }}
+        >
+          <FileUploadIcon />
+          <Input
+            accept='text/csv'
+            inputRef={uploadInput}
+            key={String(uploading)}
+            onChange={handleChangeUpload}
+            type='file'
+            style={{ display: 'none' }}
+          />
+        </Fab>
+      </Box>
+    </>
   )
 }
