@@ -6,7 +6,7 @@ const API_URL = '/api/transactions/'
 const createTransaction = (token) => (transactionData) => axios.post(API_URL, transactionData, getConfig(token))
 
 // Get user transactions
-const getTransactions = (token) => () => axios.get(API_URL, getConfig(token))
+const getTransactions = (token) => (account) => axios.get(API_URL, { ...getConfig(token), params: { account } })
 
 // Delete user transaction
 const deleteTransaction = (token) => (transactionId) => axios.delete(API_URL + transactionId, getConfig(token))

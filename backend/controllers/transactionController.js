@@ -2,7 +2,8 @@ const moment = require('moment')
 moment.locale('pt-br');
 const asyncHandler = require('express-async-handler')
 
-const Transaction = require('../models/transactionModel')
+const Transaction = require('../models/transactionModel');
+const mongoose = require('mongoose');
 
 const DESCRIPTION_SEPARATOR = ' - ';
 
@@ -79,8 +80,14 @@ const formatGroups = ({
 // @desc    Get transactions
 // @route   GET /api/transactions
 // @access  Private
-const getTransactions = asyncHandler(async (_req, res) => {
+const getTransactions = asyncHandler(async (req, res) => {
   const grouped = await Transaction.aggregate([{
+    $match: {
+      user: mongoose.Types.ObjectId(req.user.id),
+      account: req.query.account,
+    }
+  },
+  {
     $group: {
       _id: "$date",
       transactions: {

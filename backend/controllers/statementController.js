@@ -22,11 +22,22 @@ const setStatement = asyncHandler(async (req, res) => {
   }
 
   const parseTransaction = text => {
-    const [date, value, identifier, description] = text.split(',')
-    return { date: new Date(date.split('/').reverse().join('-')), value, identifier, description, user: req.user.id }
+    const [date, value, , description] = text.split(',')
+    return {
+      date: new Date(date.split('/').reverse().join('-')),
+      value,
+      description,
+      user: req.user.id,
+      account,
+      reference: text,
+    }
   }
 
-  const transactions = await Transaction.insertMany(rawTransactions.filter(Boolean).map(parseTransaction))
+  const transactions = await Transaction.insertMany(rawTransactions.filter(Boolean).map(parseTransaction)).catch(error => {
+    console.error(error)
+    res.status(400)
+    throw new Error('Erro desconhecido ao importar os dados')
+  })
 
   res.status(200).json(transactions)
 })
