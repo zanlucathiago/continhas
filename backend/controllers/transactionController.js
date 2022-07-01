@@ -1,6 +1,6 @@
 const moment = require('moment')
 moment.locale('pt-br');
-const asyncHandler = require('express-async-handler')
+const asyncHandler = require('../middleware/asyncMiddleware');
 
 const Transaction = require('../models/transactionModel');
 const mongoose = require('mongoose');

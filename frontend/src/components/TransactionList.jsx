@@ -48,7 +48,7 @@ export default function TransactionList ({ account }) {
             }}
           >
             {groups.map(({ date, transactions }) => (
-              <TransactionGroup date={date}>
+              <TransactionGroup date={date} key={date}>
                 {transactions.map(
                   ({ icon, label, secondary, value, _id, isCredit }) => (
                     <Transaction

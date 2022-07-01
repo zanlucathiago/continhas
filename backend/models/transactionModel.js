@@ -24,10 +24,6 @@ const transactionSchema = mongoose.Schema(
       type: Number,
       required: [true, 'Por favor insira um valor'],
     },
-    description: {
-      type: String,
-      required: [true, 'Por favor insira uma descrição'],
-    },
   },
   {
     timestamps: true,

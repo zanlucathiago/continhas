@@ -1,5 +1,5 @@
-const asyncHandler = require('express-async-handler');
 const { CSV_MAPPER } = require('../enums/account');
+const asyncHandler = require('../middleware/asyncMiddleware');
 
 const Transaction = require('../models/transactionModel')
 
@@ -21,17 +21,15 @@ const setStatement = asyncHandler(async (req, res) => {
     throw new Error('Conteúdo do arquivo não suportado')
   }
 
-  const parseTransaction = text => {
-    const [date, value, , description] = text.split(',')
-    return {
-      date: new Date(date.split('/').reverse().join('-')),
-      value,
-      description,
-      user: req.user.id,
-      account,
-      reference: text,
-    }
-  }
+  const { mapper, key } = account
+
+  const parseTransaction = text =>
+  ({
+    ...mapper(text.split(',')),
+    user: req.user.id,
+    account: key,
+    reference: text,
+  })
 
   const transactions = await Transaction.insertMany(rawTransactions.filter(Boolean).map(parseTransaction)).catch(error => {
     console.error(error)

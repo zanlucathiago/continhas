@@ -4,8 +4,20 @@ const ACCOUNT_MAPPER = {
 }
 
 const CSV_MAPPER = {
-  'date,category,title,amount': ACCOUNT_MAPPER.CREDIT_CARD,
-  'Data,Valor,Identificador,Descrição': ACCOUNT_MAPPER.DEFAULT
+  'date,category,title,amount': {
+    key: ACCOUNT_MAPPER.CREDIT_CARD,
+    mapper: ([date, , , value]) => ({
+      date,
+      value,
+    })
+  },
+  'Data,Valor,Identificador,Descrição': {
+    key: ACCOUNT_MAPPER.DEFAULT,
+    mapper: ([date, value]) => ({
+      date: new Date(date.split('/').reverse().join('-')),
+      value,
+    })
+  }
 }
 
 const ACCOUNTS = [
