@@ -1,6 +1,5 @@
-import icons from '../icons'
-import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
   Box,
   Drawer,
@@ -16,6 +15,7 @@ import {
 } from '@mui/material'
 import { useContext, useState } from 'react'
 import AuthContext from '../context/AuthContext'
+import icons from '../icons'
 
 export default function Transaction ({
   _id,
@@ -68,10 +68,11 @@ export default function Transaction ({
     <>
       <ListItem disableGutters>
         <ListItemButton onClick={handleOpen} sx={{ p: 0 }}>
-          <ListItemIcon style={{ minWidth: 40 }}>
+          <ListItemIcon style={{ minWidth: 51 }}>
             <SvgIcon
               component={Icon}
               color={isCredit ? 'success' : 'inherit'}
+              fontSize="large"
             />
           </ListItemIcon>
           <ListItemText

@@ -1,11 +1,18 @@
 
 const ICON_MAPPER = {
+  BAG: 'ShoppingBag',
+  CAR: 'DirectionsCar',
   DEFAULT_CARD: 'CreditCard',
   DEFAULT_RECEIVED: 'ArrowDownward',
+  HOUSE: 'House',
+  JOYSTICK: 'SportsEsports',
+  PENCIL: 'Create',
   SAVED_MONEY: 'Savings',
   PAYMENT_MADE: 'QrCode2',
   SENT_TRANSFER: 'ArrowUpward',
   ACCOUNT_CREDIT: 'KeyboardReturn',
+  SUPERMARKET: 'LocalGroceryStore',
+  TOOL: 'Build',
 }
 
 const TRANSACTION_MAPPER = {
@@ -47,20 +54,58 @@ const TRANSACTION_MAPPER = {
   },
 }
 
+const CATEGORY_MAPPER = {
+  casa: {
+    secondary: 'Casa',
+    icon: ICON_MAPPER.HOUSE,
+  },
+  vestuário: {
+    secondary: 'Vestuário',
+    icon: ICON_MAPPER.BAG,
+  },
+  eletrônicos: {
+    secondary: 'Eletrônicos',
+    icon: ICON_MAPPER.JOYSTICK,
+  },
+  transporte: {
+    secondary: 'Transporte',
+    icon: ICON_MAPPER.CAR,
+  },
+  serviços: {
+    secondary: 'Serviços',
+    icon: ICON_MAPPER.TOOL,
+  },
+  supermercado: {
+    secondary: 'Supermercado',
+    icon: ICON_MAPPER.SUPERMARKET,
+  },
+  educação: {
+    secondary: 'Educação',
+    icon: ICON_MAPPER.PENCIL,
+  },
+  "": {
+    icon: ICON_MAPPER.DEFAULT_CARD,
+  }
+}
+
 const ACCOUNT_MAPPER = {
   DEFAULT: {
-    formatter: ([, , , description]) => {
-      const [primary, secondary] = description.split(' - ');
+    formatter: (value, [, , , description]) => {
+      const [primary, label] = description.split(' - ');
       return {
+        label,
+        isCredit: value > 0,
         ...(TRANSACTION_MAPPER[primary]),
-        secondary,
       }
-
     },
     key: 'DEFAULT'
   },
   CREDIT_CARD: {
-    formatter: ([]) => ({}),
+    formatter: (value, [, category, label]) => ({
+      ...(CATEGORY_MAPPER[category]),
+      label,
+      isCredit: value < 0,
+    }),
     key: 'CREDIT_CARD'
   },
 }

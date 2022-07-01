@@ -7,13 +7,12 @@ const mongoose = require('mongoose');
 const { ACCOUNT_MAPPER } = require('../enums/account');
 
 const formatTransaction = ({ account, reference, _id, value }) => ({
-  ...ACCOUNT_MAPPER[account].formatter(reference.split(',')),
+  ...ACCOUNT_MAPPER[account].formatter(value, reference.split(',')),
   _id,
   value: Math.abs(value).toLocaleString('pt-br', {
     style: 'currency',
     currency: 'BRL',
   }),
-  isCredit: value > 0,
 })
 
 const formatGroups = ({
