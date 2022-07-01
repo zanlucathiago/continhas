@@ -9,8 +9,8 @@ export function AlertProvider({ children }) {
     setToast(null)
   }
 
-  const handleCatch = (callback) => (...args) => callback(...args).catch(error => {
-    setToast(error?.response?.data.message || 'Erro inesperado ao processar, por favor tente novamente.')
+  const handleCatch = (callback) => (...args) => callback(...args).catch(({ message }) => {
+    setToast(message)
     throw Error()
   })
 

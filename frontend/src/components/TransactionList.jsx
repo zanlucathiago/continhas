@@ -1,14 +1,16 @@
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import Savings from '@mui/icons-material/Savings'
 import { Alert, AlertTitle, Button, List, Skeleton } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import Transaction from '../components/Transaction'
 import AuthContext from '../context/AuthContext'
+import ErrorAlertTitle from './ErrorAlertTitle'
 import TransactionGroup from './TransactionGroup'
 
 const isNot = _id => transaction => transaction._id !== _id
 
 export default function TransactionList ({ account }) {
-  const [alert, setAlert] = useState(false)
+  const [alert, setAlert] = useState(null)
 
   const { getTransactions } = useContext(AuthContext)
 
@@ -20,8 +22,8 @@ export default function TransactionList ({ account }) {
       .catch(handleCatch)
   }
 
-  const handleCatch = () => {
-    setAlert(true)
+  const handleCatch = ({ message }) => {
+    setAlert(message)
   }
 
   useEffect(fetchTransactions, [])
@@ -84,14 +86,19 @@ export default function TransactionList ({ account }) {
           <Alert
             action={
               <Button color='inherit' onClick={handleClick}>
-                Repetir
+                Tentar novamente
               </Button>
             }
+            icon={<ErrorOutlineIcon fontSize='large' />}
             severity='error'
-            style={{ alignItems: 'center', flexDirection: 'column' }}
+            style={{
+              alignItems: 'center',
+              flexDirection: 'column',
+              textAlign: 'center'
+            }}
           >
-            <AlertTitle>Algo errado aconteceu</AlertTitle>
-            Por favor tente novamente
+            <ErrorAlertTitle />
+            {alert}
           </Alert>
         ) : (
           Array(4)

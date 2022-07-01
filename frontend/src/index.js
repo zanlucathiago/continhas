@@ -11,7 +11,11 @@ const promiseCallback = data => resolve => setTimeout(handleTimeout(data, resolv
 
 const handleResponse = ({ data }) => new Promise(promiseCallback(data))
 
-axios.interceptors.response.use(handleResponse);
+const handleReject = (error) => {
+  throw Error(error?.response?.data.message || 'A solicitação falhou devido a um erro de conexão.');
+}
+
+axios.interceptors.response.use(handleResponse, handleReject);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

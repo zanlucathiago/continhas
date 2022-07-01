@@ -18,7 +18,7 @@ const setStatement = asyncHandler(async (req, res) => {
 
   if (!account) {
     res.status(400)
-    throw new Error('Conteúdo do arquivo não suportado')
+    throw new Error('A importação falhou porque contém um arquivo inválido')
   }
 
   const { mapper, key } = account
