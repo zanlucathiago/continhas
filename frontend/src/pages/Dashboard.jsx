@@ -61,6 +61,7 @@ export default function Dashboard () {
         <TransactionList
           key={`${String(listKey)}-${value}`}
           account={value}
+          onUpload={handleClickUpload}
         />
       </Stack>
       <Fab

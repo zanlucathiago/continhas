@@ -7,15 +7,15 @@ const DEFAULT_TIMEOUT = process.env.NODE_ENV === 'development' ? 1414 : 0
 
 const handleTimeout = (data, callback) => () => callback(data)
 
-const promiseCallback = data => resolve => setTimeout(handleTimeout(data, resolve), DEFAULT_TIMEOUT)
+const resolvePromise = ({ data }) => resolve => setTimeout(handleTimeout(data, resolve), DEFAULT_TIMEOUT)
 
-const handleResponse = ({ data }) => new Promise(promiseCallback(data))
+const rejectPromise = (error) => (_resolve, reject) => setTimeout(handleTimeout(Error(
+  error?.response?.data.message || 'A solicitação falhou devido a um erro de conexão.'
+), reject), DEFAULT_TIMEOUT)
 
-const handleReject = (error) => {
-  throw Error(error?.response?.data.message || 'A solicitação falhou devido a um erro de conexão.');
-}
+const handleResponse = (callback) => (response) => new Promise(callback(response))
 
-axios.interceptors.response.use(handleResponse, handleReject);
+axios.interceptors.response.use(handleResponse(resolvePromise), handleResponse(rejectPromise));
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
