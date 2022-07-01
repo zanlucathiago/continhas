@@ -7,7 +7,7 @@ import TransactionGroup from './TransactionGroup'
 
 const isNot = _id => transaction => transaction._id !== _id
 
-export default function TransactionList () {
+export default function TransactionList ({ account }) {
   const [alert, setAlert] = useState(false)
 
   const { getTransactions } = useContext(AuthContext)
@@ -15,7 +15,7 @@ export default function TransactionList () {
   const [groups, setTransactions] = useState(null)
 
   const fetchTransactions = () => {
-    getTransactions()
+    getTransactions(account)
       .then(setTransactions)
       .catch(handleCatch)
   }
@@ -24,7 +24,7 @@ export default function TransactionList () {
     setAlert(true)
   }
 
-  useEffect(fetchTransactions, [])
+  useEffect(fetchTransactions, [account])
 
   const handleDelete = _id => () => {
     setTransactions(groups.filter(isNot(_id)))

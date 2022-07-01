@@ -5,10 +5,14 @@ import { useContext, useRef, useState } from 'react'
 import TransactionList from '../components/TransactionList'
 import AuthContext from '../context/AuthContext'
 
+const DEFAULT_ACCOUNT = 'DEFAULT'
+
 export default function Dashboard () {
   const [listKey, setListKey] = useState(false)
+
   const [uploading, setUploading] = useState(false)
-  const [value, setValue] = useState(0)
+
+  const [value, setValue] = useState(DEFAULT_ACCOUNT)
 
   const handleChange = (_event, newValue) => {
     setValue(newValue)
@@ -51,10 +55,10 @@ export default function Dashboard () {
     <Box sx={{ p: 2 }}>
       <Stack spacing={2}>
         <Tabs value={value} onChange={handleChange} variant='fullWidth'>
-          <Tab label='Minha conta' />
-          <Tab label='Cartão de crédito' />
+          <Tab label='Minha conta' value={DEFAULT_ACCOUNT} />
+          <Tab label='Cartão de crédito' value='CREDIT_CARD' />
         </Tabs>
-        <TransactionList key={String(listKey)} />
+        <TransactionList key={String(listKey)} account={value} />
       </Stack>
       <Fab
         color='primary'
