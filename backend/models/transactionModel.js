@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { ACCOUNTS } = require('../enums/account')
 
 const transactionSchema = mongoose.Schema(
   {
@@ -7,14 +6,10 @@ const transactionSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    user: {
+    statement: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
-    },
-    account: {
-      type: String,
-      enum: ACCOUNTS,
+      ref: 'Statement',
     },
     date: {
       type: Date,
@@ -31,7 +26,5 @@ const transactionSchema = mongoose.Schema(
 )
 
 const TransactionModel = mongoose.model('Transaction', transactionSchema)
-
-TransactionModel.createIndexes()
 
 module.exports = TransactionModel

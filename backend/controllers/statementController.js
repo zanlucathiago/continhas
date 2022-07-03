@@ -1,7 +1,7 @@
 const { CSV_MAPPER } = require('../enums/account');
 const asyncHandler = require('../middleware/asyncMiddleware');
-
 const Transaction = require('../models/transactionModel')
+const Statement = require('../models/statementModel')
 
 // @desc    Set statement
 // @route   POST /api/statements
@@ -26,16 +26,46 @@ const setStatement = asyncHandler(async (req, res) => {
   const parseTransaction = text =>
   ({
     ...mapper(text.split(',')),
-    user: req.user.id,
-    account: key,
     reference: text,
   })
 
-  const transactions = await Transaction.insertMany(rawTransactions.filter(Boolean).map(parseTransaction)).catch(error => {
-    console.error(error)
-    res.status(400)
-    throw new Error('Erro desconhecido ao importar os dados')
+  const parsedTransactions = rawTransactions.filter(Boolean).map(parseTransaction);
+
+  // Check if statement was previously uploaded
+  const dateList = parsedTransactions.map(({ date }) => date)
+  const minDate = dateList.reduce((m, e) => e < m ? e : m)
+  const maxDate = dateList.reduce((m, e) => e > m ? e : m)
+
+  const found = await Statement.findOne({
+    user: req.user.id,
+    account: key,
+    $and: [
+      {
+        min: {
+          $lte: maxDate
+        }
+      },
+      {
+        max: {
+          $gte: minDate
+        }
+      },
+    ]
   })
+  if (found) {
+    res.status(400)
+    throw new Error('A importação falhou porque o extrato já consta na base')
+  }
+
+  const statement = await Statement.create({
+    reference: req.body.text,
+    user: req.user.id,
+    account: key,
+    min: minDate,
+    max: maxDate
+  })
+
+  const transactions = await Transaction.insertMany(parsedTransactions.map(transaction => ({ ...transaction, statement })))
 
   res.status(200).json(transactions)
 })

@@ -3,50 +3,56 @@ moment.locale('pt-br');
 const asyncHandler = require('../middleware/asyncMiddleware');
 
 const Transaction = require('../models/transactionModel');
-const mongoose = require('mongoose');
 const { ACCOUNT_MAPPER } = require('../enums/account');
-
-const formatTransaction = ({ account, reference, _id, value }) => ({
-  ...ACCOUNT_MAPPER[account].formatter(value, reference.split(',')),
-  _id,
-  value: Math.abs(value).toLocaleString('pt-br', {
-    style: 'currency',
-    currency: 'BRL',
-  }),
-})
-
-const formatGroups = ({
-  _id,
-  transactions,
-}) => ({
-  date: moment.utc(_id).format('ddd[, ]D[ de ]MMM[ de ]YYYY').toUpperCase(),
-  transactions: transactions.map(formatTransaction),
-})
+const Statement = require('../models/statementModel');
 
 // @desc    Get transactions
 // @route   GET /api/transactions
 // @access  Private
 const getTransactions = asyncHandler(async (req, res) => {
-  const grouped = await Transaction.aggregate([{
-    $match: {
-      user: mongoose.Types.ObjectId(req.user.id),
-      account: req.query.account,
-    }
-  },
-  {
-    $group: {
-      _id: "$date",
-      transactions: {
-        $push: '$$ROOT',
-      },
-    },
-  }, {
-    $sort: {
-      _id: -1,
-    },
-  }])
+  const statement = await Statement.findOne({
+    account: req.query.account,
+    user: req.user.id
+  })
 
-  res.status(200).json(grouped.map(formatGroups))
+  const getGrouped = async () => {
+    if (statement) {
+      const grouped = await Transaction.aggregate([
+        {
+          $match: { statement: statement._id }
+        },
+        {
+          $group: { _id: "$date", transactions: { $push: '$$ROOT' } },
+        },
+        {
+          $sort: { _id: -1 },
+        }])
+      const { formatter } = ACCOUNT_MAPPER[req.query.account]
+
+      const formatTransaction = ({ reference, _id, value }) => ({
+        ...formatter(value, reference.split(',')),
+        _id,
+        value: Math.abs(value).toLocaleString('pt-br', {
+          style: 'currency',
+          currency: 'BRL',
+        }),
+      })
+
+      const formatGroups = ({
+        _id,
+        transactions,
+      }) => ({
+        date: moment.utc(_id).format('ddd[, ]D[ de ]MMM[ de ]YYYY').toUpperCase(),
+        transactions: transactions.map(formatTransaction),
+      })
+
+      return grouped.map(formatGroups)
+    }
+
+    return []
+  }
+  const result = await getGrouped()
+  res.status(200).json(result)
 })
 
 // @desc    Set transaction

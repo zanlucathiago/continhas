@@ -91,9 +91,9 @@ const CATEGORY_MAPPER = {
 const ACCOUNT_MAPPER = {
   DEFAULT: {
     formatter: (value, [, , , description]) => {
-      const [primary, label] = description.split(' - ');
+      const [primary, secondary] = description.split(' - ');
       return {
-        label,
+        secondary,
         isCredit: value > 0,
         ...(TRANSACTION_MAPPER[primary]),
       }
