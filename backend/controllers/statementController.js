@@ -65,9 +65,9 @@ const setStatement = asyncHandler(async (req, res) => {
     max: maxDate
   })
 
-  const transactions = await Transaction.insertMany(parsedTransactions.map(transaction => ({ ...transaction, statement })))
+  await Transaction.insertMany(parsedTransactions.map(transaction => ({ ...transaction, statement })))
 
-  res.status(200).json(transactions)
+  res.status(200).json(statement)
 })
 
 module.exports = {

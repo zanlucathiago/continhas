@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import authService from "../features/auth/authService";
+import authService from "../features/authService";
 import storageService from "../storage/storageService";
 import AlertContext from "./AlertContext";
 

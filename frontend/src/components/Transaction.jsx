@@ -72,7 +72,7 @@ export default function Transaction ({
             <SvgIcon
               component={Icon}
               color={isCredit ? 'success' : 'inherit'}
-              fontSize="large"
+              fontSize='large'
             />
           </ListItemIcon>
           <ListItemText
@@ -86,6 +86,7 @@ export default function Transaction ({
                 <Typography variant='body2'>{total}</Typography>
               </>
             }
+            secondaryTypographyProps={{ component: 'span' }}
           />
         </ListItemButton>
       </ListItem>

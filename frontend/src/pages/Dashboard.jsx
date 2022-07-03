@@ -1,102 +1,120 @@
-import FileUploadIcon from '@mui/icons-material/FileUpload'
-import { Box, Input, Stack, Tab, Tabs } from '@mui/material'
-import Fab from '@mui/material/Fab'
-import { useContext, useRef, useState } from 'react'
+import AddIcon from '@mui/icons-material/Add'
+import { Box, Skeleton, Stack, Tab, Tabs } from '@mui/material'
+import { useContext, useEffect, useRef, useState } from 'react'
+import AccountDrawer from '../components/AccountDrawer'
 import TransactionList from '../components/TransactionList'
+import UploadButton from '../components/UploadButton'
 import AuthContext from '../context/AuthContext'
 
+const ADD_ACCOUNT = 'NEW_ACCOUNT'
 const DEFAULT_ACCOUNT = 'DEFAULT'
 
 export default function Dashboard () {
+  const { getAccounts } = useContext(AuthContext)
+
+  const [accounts, setAccounts] = useState(null)
+
+  const [addAccount, setAddAccount] = useState(false)
+
   const [listKey, setListKey] = useState(false)
 
-  const [uploading, setUploading] = useState(false)
-
-  const [value, setValue] = useState(DEFAULT_ACCOUNT)
+  const [activeTab, setValue] = useState(DEFAULT_ACCOUNT)
 
   const handleChange = (_event, newValue) => {
-    setValue(newValue)
+    if (ADD_ACCOUNT === newValue) {
+      setAddAccount(true)
+    } else {
+      setValue(newValue)
+    }
   }
 
-  const uploadInput = useRef()
+  const fetchAccounts = () => {
+    getAccounts().then(setAccounts)
+  }
 
-  const { createStatement } = useContext(AuthContext)
+  useEffect(fetchAccounts, [])
+
+  const uploadInput = useRef()
 
   const handleClickUpload = () => {
     uploadInput.current.click()
   }
 
-  const handleChangeUpload = event => {
-    const {
-      target: {
-        files: [file]
-      }
-    } = event
-    if (file) {
-      file
-        .text()
-        .then(createStatement)
-        .then(onUpload)
-        .catch(handleCatch)
-      setUploading(true)
-    }
+  const handleClose = () => {
+    setAddAccount(false)
   }
 
-  const onUpload = () => {
+  const handleAddTab = _id => {
+    setValue(_id)
+    setAccounts(null)
+    fetchAccounts()
+    handleClose()
+  }
+
+  const handleUpload = account => {
     setListKey(!listKey)
-    setUploading(false)
-  }
-
-  const handleCatch = () => {
-    setUploading(false)
+    setValue(account)
   }
 
   return (
     <>
+      <AccountDrawer
+        open={addAccount}
+        onClose={handleClose}
+        onAddTab={handleAddTab}
+      />
       <Tabs
-        component={Box}
         sx={{
           position: 'sticky',
           top: 56,
           zIndex: 2,
           bgcolor: 'background.default'
         }}
-        value={value}
+        variant='scrollable'
+        value={activeTab}
         onChange={handleChange}
-        variant='fullWidth'
       >
-        <Tab label='Minha conta' value={DEFAULT_ACCOUNT} />
-        <Tab label='Cartão de crédito' value='CREDIT_CARD' />
+        <Tab label='Minha conta' value={DEFAULT_ACCOUNT} wrapped />
+        <Tab label='Cartão de crédito' value='CREDIT_CARD' wrapped />
+        {accounts ? (
+          accounts.map(account => (
+            <Tab
+              key={account._id}
+              label={account.title}
+              value={account._id}
+              wrapped
+            />
+          ))
+        ) : (
+          <Tab
+            disabled
+            label={
+              <>
+                <Skeleton style={{ width: '100%' }} />
+                <Skeleton style={{ width: '100%' }} />
+              </>
+            }
+            wrapped
+          />
+        )}
+        <Tab
+          icon={<AddIcon fontSize='small' />}
+          iconPosition='start'
+          label='Nova conta'
+          style={{ minHeight: 48 }}
+          wrapped
+          value={ADD_ACCOUNT}
+        />
       </Tabs>
       <Box sx={{ p: 2 }}>
         <Stack spacing={2}>
           <TransactionList
-            key={`${String(listKey)}-${value}`}
-            account={value}
+            key={`${String(listKey)}-${activeTab}`}
+            account={activeTab}
             onUpload={handleClickUpload}
           />
         </Stack>
-        <Fab
-          color='primary'
-          disabled={uploading}
-          onClick={handleClickUpload}
-          style={{
-            position: 'fixed',
-            bottom: 16,
-            left: '50%',
-            transform: 'translate(-50%, 0)'
-          }}
-        >
-          <FileUploadIcon />
-          <Input
-            accept='text/csv'
-            inputRef={uploadInput}
-            key={String(uploading)}
-            onChange={handleChangeUpload}
-            type='file'
-            style={{ display: 'none' }}
-          />
-        </Fab>
+        <UploadButton onUpload={handleUpload} />
       </Box>
     </>
   )
