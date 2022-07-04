@@ -1,33 +1,32 @@
 import AddIcon from '@mui/icons-material/Add'
 import { Box, Skeleton, Stack, Tab, Tabs } from '@mui/material'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import AccountDrawer from '../components/AccountDrawer'
+import DefaultList from '../components/DefaultList'
 import FetchAlert from '../components/FetchAlert'
 import FetchSkeleton from '../components/FetchSkeleton'
-import TransactionList from '../components/TransactionList'
-import UploadButton from '../components/UploadButton'
 import AuthContext from '../context/AuthContext'
 
 const ADD_ACCOUNT = 'NEW_ACCOUNT'
+
 const DEFAULT_ACCOUNT = 'DEFAULT'
 
 export default function Dashboard () {
   const [alert, setAlert] = useState(null)
+
   const { getAccounts } = useContext(AuthContext)
 
   const [references, setReferences] = useState(null)
 
   const [addAccount, setAddAccount] = useState(false)
 
-  const [listKey, setListKey] = useState(false)
-
-  const [activeTab, setValue] = useState(DEFAULT_ACCOUNT)
+  const [activeTab, setActiveTab] = useState(DEFAULT_ACCOUNT)
 
   const handleChange = (_event, newValue) => {
     if (ADD_ACCOUNT === newValue) {
       setAddAccount(true)
     } else {
-      setValue(newValue)
+      setActiveTab(newValue)
     }
   }
 
@@ -43,26 +42,15 @@ export default function Dashboard () {
 
   useEffect(fetchReferences, [])
 
-  const uploadInput = useRef()
-
-  const handleClickUpload = () => {
-    uploadInput.current.click()
-  }
-
   const handleClose = () => {
     setAddAccount(false)
   }
 
   const handleAddTab = _id => {
-    setValue(_id)
+    setActiveTab(_id)
     setReferences(null)
     fetchReferences()
     handleClose()
-  }
-
-  const handleUpload = account => {
-    setListKey(!listKey)
-    setValue(account)
   }
 
   const handleClick = () => {
@@ -123,14 +111,9 @@ export default function Dashboard () {
             ) : (
               <FetchSkeleton />
             ))) || (
-            <TransactionList
-              key={`${String(listKey)}-${activeTab}`}
-              account={activeTab}
-              onUpload={handleClickUpload}
-            />
+            <DefaultList account={activeTab} onChangeAccount={setActiveTab} />
           )}
         </Stack>
-        <UploadButton onUpload={handleUpload} />
       </Box>
     </>
   )
