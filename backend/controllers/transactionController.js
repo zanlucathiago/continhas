@@ -3,8 +3,10 @@ moment.locale('pt-br');
 const asyncHandler = require('../middleware/asyncMiddleware');
 
 const Transaction = require('../models/transactionModel');
+const Reference = require('../models/referenceModel');
 const { ACCOUNT_MAPPER } = require('../enums/account');
 const Statement = require('../models/statementModel');
+const Account = require('../models/accountModel');
 
 // @desc    Get transactions
 // @route   GET /api/transactions
@@ -53,6 +55,56 @@ const getTransactions = asyncHandler(async (req, res) => {
   }
   const result = await getGrouped()
   res.status(200).json(result)
+})
+
+// @desc    Get transaction
+// @route   GET /api/transactions/:id
+// @access  Private
+const getTransaction = asyncHandler(async (req, res) => {
+  const transaction = await Transaction.findById(req.params.id)
+  const statement = await Statement.findById(transaction.statement._id)
+
+  if (!transaction) {
+    res.status(400)
+    throw new Error('Transação não encontrada')
+  }
+
+  // Check for user
+  if (!req.user) {
+    res.status(401)
+    throw new Error('Usuário não encontrado')
+  }
+
+  // Make sure the logged in user matches the transaction user
+  if (statement.user.toString() !== req.user.id) {
+    res.status(401)
+    throw new Error('Usuário não autorizado')
+  }
+
+  const references = await Reference.find({
+    transaction,
+  }).populate('account')
+
+  const accountCount = await Account.count({ user: req.user.id })
+
+  res.status(200).json({
+    hasAccounts: accountCount > 0,
+    reports: references.map(({ _id, account, value }) => ({
+      _id, account: account.title, value: Math.abs(value).toLocaleString('pt-br', {
+        style: 'currency',
+        currency: 'BRL',
+      })
+    })),
+    // reports: references,
+    rawValue: Math.abs(transaction.value),
+    date: moment.utc(transaction.date).format('ddd[, ]D[ de ]MMM[ de ]YYYY'),
+    description: transaction.reference.split(',')[ACCOUNT_MAPPER[statement.account].descriptionIndex].split(' - ').join('\n'),
+    _id: transaction._id,
+    value: Math.abs(transaction.value).toLocaleString('pt-br', {
+      style: 'currency',
+      currency: 'BRL',
+    }),
+  })
 })
 
 // @desc    Set transaction
@@ -132,6 +184,7 @@ const deleteTransaction = asyncHandler(async (req, res) => {
 
 module.exports = {
   getTransactions,
+  getTransaction,
   setTransaction,
   updateTransaction,
   deleteTransaction,

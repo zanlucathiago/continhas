@@ -8,6 +8,9 @@ const createTransaction = (token) => (transactionData) => axios.post(API_URL, tr
 // Get user transactions
 const getTransactions = (token) => (account) => axios.get(API_URL, { ...getConfig(token), params: { account } })
 
+// Get user transactions
+const getTransaction = (token) => (transactionId) => axios.get(API_URL + transactionId, getConfig(token))
+
 // Delete user transaction
 const deleteTransaction = (token) => (transactionId) => axios.delete(API_URL + transactionId, getConfig(token))
 
@@ -23,6 +26,7 @@ const getConfig = (token) => ({
 const transactionService = {
   createTransaction,
   getTransactions,
+  getTransaction,
   deleteTransaction,
   updateTransaction,
 }

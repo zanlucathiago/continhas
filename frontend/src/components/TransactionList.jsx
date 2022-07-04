@@ -1,11 +1,11 @@
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import Savings from '@mui/icons-material/Savings'
-import { AlertTitle, Box, Button, List, Skeleton } from '@mui/material'
+import { AlertTitle, Button, List } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import Transaction from '../components/Transaction'
 import AuthContext from '../context/AuthContext'
 import DefaultAlert from './DefaultAlert'
-import ErrorAlertTitle from './ErrorAlertTitle'
+import FetchAlert from './FetchAlert'
+import FetchSkeleton from './FetchSkeleton'
 import TransactionGroup from './TransactionGroup'
 
 const isNot = _id => transaction => transaction._id !== _id
@@ -28,10 +28,6 @@ export default function TransactionList ({ account, onUpload }) {
   }
 
   useEffect(fetchTransactions, [])
-
-  const handleDelete = _id => () => {
-    setTransactions(groups.filter(isNot(_id)))
-  }
 
   const handleClick = () => {
     setAlert(null)
@@ -61,7 +57,6 @@ export default function TransactionList ({ account, onUpload }) {
                       primary={label}
                       secondary={secondary}
                       total={value}
-                      onDelete={handleDelete(_id)}
                       isCredit={isCredit}
                     />
                   )
@@ -84,35 +79,9 @@ export default function TransactionList ({ account, onUpload }) {
           </DefaultAlert>
         ))) ||
         (alert ? (
-          <DefaultAlert
-            action={
-              <Button color='inherit' onClick={handleClick}>
-                Tentar novamente
-              </Button>
-            }
-            Icon={ErrorOutlineIcon}
-            severity='error'
-          >
-            <ErrorAlertTitle />
-            {alert}
-          </DefaultAlert>
+          <FetchAlert onClick={handleClick}>{alert}</FetchAlert>
         ) : (
-          <Box
-            sx={{
-              left: 0,
-              p: 2,
-              top: '50%',
-              position: 'absolute',
-              transform: 'translate(0px, -50%)',
-              width: '100%'
-            }}
-          >
-            {Array(4)
-              .fill()
-              .map((_item, index) => (
-                <Skeleton height={41} key={index} />
-              ))}
-          </Box>
+          <FetchSkeleton />
         ))}
     </>
   )

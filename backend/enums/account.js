@@ -90,6 +90,7 @@ const CATEGORY_MAPPER = {
 
 const ACCOUNT_MAPPER = {
   DEFAULT: {
+    descriptionIndex: 3,
     formatter: (value, [, , , description]) => {
       const [primary, secondary] = description.split(' - ');
       return {
@@ -101,6 +102,7 @@ const ACCOUNT_MAPPER = {
     key: 'DEFAULT'
   },
   CREDIT_CARD: {
+    descriptionIndex: 2,
     formatter: (value, [, category, label]) => ({
       ...(CATEGORY_MAPPER[category]),
       label,
