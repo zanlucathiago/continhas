@@ -1,16 +1,16 @@
 import Savings from '@mui/icons-material/Savings'
-import { AlertTitle, Button, List } from '@mui/material'
+import { AlertTitle, List } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import Transaction from '../components/Transaction'
 import AuthContext from '../context/AuthContext'
+import AlertUploadButton from './AlertUploadButton'
 import DefaultAlert from './DefaultAlert'
 import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
 import TransactionGroup from './TransactionGroup'
+import UploadButton from './UploadButton'
 
-const isNot = _id => transaction => transaction._id !== _id
-
-export default function TransactionList ({ account, onUpload }) {
+export default function TransactionList ({ account, onChangeAccount }) {
   const [alert, setAlert] = useState(null)
 
   const { getTransactions } = useContext(AuthContext)
@@ -32,6 +32,15 @@ export default function TransactionList ({ account, onUpload }) {
   const handleClick = () => {
     setAlert(null)
     fetchTransactions()
+  }
+
+  const handleUpload = statementAccount => {
+    if (statementAccount === account) {
+      setTransactions(null)
+      fetchTransactions()
+    } else {
+      onChangeAccount(statementAccount)
+    }
   }
 
   return (
@@ -67,9 +76,7 @@ export default function TransactionList ({ account, onUpload }) {
         ) : (
           <DefaultAlert
             action={
-              <Button color='inherit' onClick={onUpload}>
-                Importar
-              </Button>
+              <AlertUploadButton color='inherit' onUpload={handleUpload} />
             }
             Icon={Savings}
             severity='info'
@@ -83,6 +90,7 @@ export default function TransactionList ({ account, onUpload }) {
         ) : (
           <FetchSkeleton />
         ))}
+      <UploadButton onUpload={handleUpload} />
     </>
   )
 }
