@@ -2,6 +2,8 @@ import AddIcon from '@mui/icons-material/Add'
 import { Box, Skeleton, Stack, Tab, Tabs } from '@mui/material'
 import { useContext, useEffect, useRef, useState } from 'react'
 import AccountDrawer from '../components/AccountDrawer'
+import FetchAlert from '../components/FetchAlert'
+import FetchSkeleton from '../components/FetchSkeleton'
 import TransactionList from '../components/TransactionList'
 import UploadButton from '../components/UploadButton'
 import AuthContext from '../context/AuthContext'
@@ -10,9 +12,10 @@ const ADD_ACCOUNT = 'NEW_ACCOUNT'
 const DEFAULT_ACCOUNT = 'DEFAULT'
 
 export default function Dashboard () {
+  const [alert, setAlert] = useState(null)
   const { getAccounts } = useContext(AuthContext)
 
-  const [accounts, setAccounts] = useState(null)
+  const [references, setReferences] = useState(null)
 
   const [addAccount, setAddAccount] = useState(false)
 
@@ -28,11 +31,17 @@ export default function Dashboard () {
     }
   }
 
-  const fetchAccounts = () => {
-    getAccounts().then(setAccounts)
+  const fetchReferences = () => {
+    getAccounts()
+      .then(setReferences)
+      .catch(handleCatch)
   }
 
-  useEffect(fetchAccounts, [])
+  const handleCatch = ({ message }) => {
+    setAlert(message)
+  }
+
+  useEffect(fetchReferences, [])
 
   const uploadInput = useRef()
 
@@ -46,14 +55,19 @@ export default function Dashboard () {
 
   const handleAddTab = _id => {
     setValue(_id)
-    setAccounts(null)
-    fetchAccounts()
+    setReferences(null)
+    fetchReferences()
     handleClose()
   }
 
   const handleUpload = account => {
     setListKey(!listKey)
     setValue(account)
+  }
+
+  const handleClick = () => {
+    setAlert(null)
+    fetchReferences()
   }
 
   return (
@@ -76,27 +90,22 @@ export default function Dashboard () {
       >
         <Tab label='Minha conta' value={DEFAULT_ACCOUNT} wrapped />
         <Tab label='Cartão de crédito' value='CREDIT_CARD' wrapped />
-        {accounts ? (
-          accounts.map(account => (
-            <Tab
-              key={account._id}
-              label={account.title}
-              value={account._id}
-              wrapped
-            />
-          ))
-        ) : (
-          <Tab
-            disabled
-            label={
-              <>
-                <Skeleton style={{ width: '100%' }} />
-                <Skeleton style={{ width: '100%' }} />
-              </>
-            }
-            wrapped
-          />
-        )}
+        {references
+          ? references.map(account => (
+              <Tab
+                key={account._id}
+                label={account.title}
+                value={account._id}
+                wrapped
+              />
+            ))
+          : !alert && (
+              <Tab
+                disabled
+                label={<Skeleton style={{ width: '100%' }} />}
+                wrapped
+              />
+            )}
         <Tab
           icon={<AddIcon fontSize='small' />}
           iconPosition='start'
@@ -108,11 +117,18 @@ export default function Dashboard () {
       </Tabs>
       <Box sx={{ p: 2 }}>
         <Stack spacing={2}>
-          <TransactionList
-            key={`${String(listKey)}-${activeTab}`}
-            account={activeTab}
-            onUpload={handleClickUpload}
-          />
+          {(!references &&
+            (alert ? (
+              <FetchAlert onClick={handleClick}>{alert}</FetchAlert>
+            ) : (
+              <FetchSkeleton />
+            ))) || (
+            <TransactionList
+              key={`${String(listKey)}-${activeTab}`}
+              account={activeTab}
+              onUpload={handleClickUpload}
+            />
+          )}
         </Stack>
         <UploadButton onUpload={handleUpload} />
       </Box>
