@@ -1,4 +1,3 @@
-import PersonIcon from '@mui/icons-material/Person'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material'
 import { useContext, useState } from 'react'
@@ -38,19 +37,23 @@ function Register () {
 
   return (
     <>
-      <Stack
-        direction='row'
-        justifyContent='center'
-        spacing={2}
-        alignItems='center'
+      <Box
+        component='form'
+        noValidate
+        autoComplete='off'
+        sx={{
+          p: 2,
+          textAlign: 'center',
+          top: '50%',
+          position: 'absolute',
+          transform: 'translate(0px, -50%)',
+          width: '100%'
+        }}
       >
-        <PersonIcon />
-        <Typography variant='h6' component='div'>
-          Crie uma conta
-        </Typography>
-      </Stack>
-      <Box component='form' noValidate autoComplete='off' sx={{ p: 2 }}>
-        <Stack spacing={2}>
+        <Stack spacing={2} style={{ alignItems: 'center' }}>
+          <Typography variant='h6' component='div'>
+            Criar sua conta no App
+          </Typography>
           <TextField
             disabled={loading}
             label='E-mail'

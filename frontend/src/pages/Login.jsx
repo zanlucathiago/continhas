@@ -1,4 +1,3 @@
-import PersonIcon from '@mui/icons-material/Person'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material'
 import { useContext, useState } from 'react'
@@ -30,56 +29,59 @@ function Login () {
   }
 
   return (
-    <>
-      <Stack
-        direction='row'
-        justifyContent='center'
-        spacing={2}
-        alignItems='center'
-      >
-        <PersonIcon />
+    <Box
+      component='form'
+      noValidate
+      autoComplete='off'
+      sx={{
+        p: 2,
+        textAlign: 'center',
+        top: '50%',
+        position: 'absolute',
+        transform: 'translate(0px, -50%)',
+        width: '100%'
+      }}
+    >
+      <Stack spacing={2} style={{ alignItems: 'center' }}>
         <Typography variant='h6' component='div'>
-          Entre com sua conta
+          Fazer login
         </Typography>
+        <Typography>Use seu e-mail</Typography>
+        <TextField
+          disabled={loading}
+          label='E-mail'
+          type='email'
+          value={email}
+          onChange={onChange('email')}
+        />
+        <TextField
+          disabled={loading}
+          label='Senha'
+          onChange={onChange('password')}
+          type='password'
+          value={password}
+        />
       </Stack>
-      <Box component='form' noValidate autoComplete='off' sx={{ p: 2 }}>
-        <Stack spacing={2}>
-          <TextField
-            disabled={loading}
-            label='E-mail'
-            type='email'
-            value={email}
-            onChange={onChange('email')}
-          />
-          <TextField
-            disabled={loading}
-            label='Senha'
-            onChange={onChange('password')}
-            type='password'
-            value={password}
-          />
-        </Stack>
-        <Box sx={{ mt: 2 }}>
-          <Grid container spacing={2} direction='row'>
-            <Grid item xs={6}>
-              <Button component='a' href='/register' style={{ width: '100%' }}>
-                Criar conta
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <LoadingButton
-                fullWidth
-                onClick={handleClick}
-                loading={loading}
-                variant='contained'
-              >
-                Entrar
-              </LoadingButton>
-            </Grid>
+      <Box sx={{ mt: 2 }}>
+        <Grid container spacing={2} direction='row'>
+          <Grid item xs={6}>
+            <Button component='a' href='/register' style={{ width: '100%' }}>
+              Criar conta
+            </Button>
           </Grid>
-        </Box>
+          <Grid item xs={6}>
+            <LoadingButton
+              fullWidth
+              onClick={handleClick}
+              loading={loading}
+              variant='contained'
+            >
+              Entrar
+            </LoadingButton>
+          </Grid>
+        </Grid>
       </Box>
-    </>
+    </Box>
   )
 }
 

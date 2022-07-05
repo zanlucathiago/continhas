@@ -7,31 +7,63 @@ const { ACCOUNT_MAPPER } = require('../enums/account');
 const Statement = require('../models/statementModel');
 const Account = require('../models/accountModel');
 const Transaction = require('../models/transactionModel');
+const { default: mongoose } = require('mongoose');
 
 // @desc    Get references
 // @route   GET /api/references
 // @access  Private
 const getReferences = asyncHandler(async (req, res) => {
-  const statement = await Statement.findOne({
-    account: req.query.account,
-    user: req.user.id
-  })
+  const account = await Account.findById(req.query.account)
 
   const getGrouped = async () => {
-    if (statement) {
-      const grouped = await Reference.aggregate([
+    const grouped = await Reference.aggregate([
+      {
+        $match: {
+          account: account._id,
+        }
+      },
+      {
+        $lookup:
         {
-          $match: { statement: statement._id }
+          from: 'transactions',
+          let: {
+            transaction: '$transaction'
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$$transaction", "$_id"]
+                }
+              }
+            },
+            {
+              $lookup: {
+                from: 'statements',
+                localField: 'statement',
+                foreignField: '_id',
+                as: 'statements'
+              }
+            }
+          ],
+          as: 'transactions'
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $first: "$transactions.date"
+          },
+          references: { $push: '$$ROOT' }
         },
-        {
-          $group: { _id: "$date", references: { $push: '$$ROOT' } },
-        },
-        {
-          $sort: { _id: -1 },
-        }])
-      const { formatter } = ACCOUNT_MAPPER[req.query.account]
+      },
+      {
+        $sort: { _id: -1 },
+      }])
 
-      const formatReference = ({ reference, _id, value }) => ({
+    const formatReference = ({ transactions: [{ reference, statements: [{ account }] }], _id, value }) => {
+      const { formatter } = ACCOUNT_MAPPER[account]
+      return ({
         ...formatter(value, reference.split(',')),
         _id,
         value: Math.abs(value).toLocaleString('pt-br', {
@@ -39,21 +71,21 @@ const getReferences = asyncHandler(async (req, res) => {
           currency: 'BRL',
         }),
       })
-
-      const formatGroups = ({
-        _id,
-        references,
-      }) => ({
-        date: moment.utc(_id).format('ddd[, ]D[ de ]MMM[ de ]YYYY').toUpperCase(),
-        references: references.map(formatReference),
-      })
-
-      return grouped.map(formatGroups)
     }
 
-    return []
+    const formatGroups = ({
+      _id,
+      references,
+    }) => ({
+      date: moment.utc(_id).format('ddd[, ]D[ de ]MMM[ de ]YYYY').toUpperCase(),
+      references: references.map(formatReference),
+    })
+
+    return grouped.map(formatGroups)
   }
+
   const result = await getGrouped()
+
   res.status(200).json(result)
 })
 

@@ -19,6 +19,10 @@ const protect = asyncHandler(async (req, res, next) => {
       // Get user from the token
       req.user = await User.findById(decoded.id).select('-password')
 
+      if (!req.user) {
+        throw new Error('Usuário não consta no banco')
+      }
+
       next()
     } catch (error) {
       console.log(error)
