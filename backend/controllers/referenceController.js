@@ -5,6 +5,8 @@ const asyncHandler = require('../middleware/asyncMiddleware');
 const Reference = require('../models/referenceModel');
 const { ACCOUNT_MAPPER } = require('../enums/account');
 const Statement = require('../models/statementModel');
+const Account = require('../models/accountModel');
+const Transaction = require('../models/transactionModel');
 
 // @desc    Get references
 // @route   GET /api/references
@@ -60,11 +62,13 @@ const getReferences = asyncHandler(async (req, res) => {
 // @access  Private
 const getReference = asyncHandler(async (req, res) => {
   const reference = await Reference.findById(req.params.id)
-  const statement = await Statement.findById(reference.statement._id)
+  const account = await Account.findById(reference.account._id)
+  const transaction = await Transaction.findById(reference.transaction._id)
+  const statement = await Statement.findById(transaction.statement._id)
 
   if (!reference) {
     res.status(400)
-    throw new Error('Transação não encontrada')
+    throw new Error('Referência não encontrada')
   }
 
   // Check for user
@@ -78,12 +82,15 @@ const getReference = asyncHandler(async (req, res) => {
     res.status(401)
     throw new Error('Usuário não autorizado')
   }
+  const { formatter } = ACCOUNT_MAPPER[statement.account]
 
   res.status(200).json({
-    reports: [],
-    rawValue: Math.abs(reference.value),
-    date: moment.utc(reference.date).format('ddd[, ]D[ de ]MMM[ de ]YYYY'),
-    description: reference.reference.split(',')[ACCOUNT_MAPPER[statement.account].descriptionIndex].split(' - ').join('\n'),
+    ...formatter(transaction.value, transaction.reference.split(',')),
+    account: account.title,
+    transactionValue: Math.abs(transaction.value).toLocaleString('pt-br', {
+      style: 'currency',
+      currency: 'BRL',
+    }),
     _id: reference._id,
     value: Math.abs(reference.value).toLocaleString('pt-br', {
       style: 'currency',

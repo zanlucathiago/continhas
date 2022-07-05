@@ -17,7 +17,7 @@ import {
 import { useContext, useEffect, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 
-export default function ReferenceDrawer ({
+export default function AddReferenceDrawer ({
   onAddReference,
   onClose,
   transaction

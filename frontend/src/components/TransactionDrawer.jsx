@@ -17,7 +17,8 @@ import {
 } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import AuthContext from '../context/AuthContext'
-import ReferenceDrawer from './ReferenceDrawer'
+import ReferenceDrawer from './AddReferenceDrawer'
+import TransactionReference from './TransactionReference'
 
 export default function TransactionDrawer ({ id, open, onClose }) {
   const [reportDrawer, setReportDrawer] = useState(null)
@@ -109,9 +110,12 @@ export default function TransactionDrawer ({ id, open, onClose }) {
               <Box style={{ flexGrow: 1 }}>
                 <List disablePadding dense>
                   {formData.reports.map(({ account, value, _id }) => (
-                    <ListItem key={_id}>
-                      <ListItemText primary={account} secondary={value} />
-                    </ListItem>
+                    <TransactionReference
+                      key={_id}
+                      id={_id}
+                      account={account}
+                      value={value}
+                    />
                   ))}
                   <ListItem sx={{ my: '6px' }}>
                     <ListItemButton

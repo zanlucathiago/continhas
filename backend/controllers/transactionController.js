@@ -90,7 +90,9 @@ const getTransaction = asyncHandler(async (req, res) => {
   res.status(200).json({
     hasAccounts: accountCount > 0,
     reports: references.map(({ _id, account, value }) => ({
-      _id, account: account.title, value: Math.abs(value).toLocaleString('pt-br', {
+      _id,
+      account: account.title,
+      value: Math.abs(value).toLocaleString('pt-br', {
         style: 'currency',
         currency: 'BRL',
       })
