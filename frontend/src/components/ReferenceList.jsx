@@ -43,6 +43,11 @@ export default function ReferenceList ({ account }) {
     fetchReferences()
   }
 
+  const handleDelete = () => {
+    setReferences(null)
+    fetchReferences()
+  }
+
   return (
     (groups &&
       (groups.length ? (
@@ -54,7 +59,12 @@ export default function ReferenceList ({ account }) {
             '& li': { padding: 0 }
           }}
         >
-          <ViewReferenceDrawer key={open} id={open} onClose={handleClose} />
+          <ViewReferenceDrawer
+            key={open}
+            id={open}
+            onClose={handleClose}
+            onDelete={handleDelete}
+          />
           {groups.map(({ date, references }) => (
             <TransactionGroup date={date} key={date}>
               {references.map(

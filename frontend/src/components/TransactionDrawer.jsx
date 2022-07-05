@@ -1,7 +1,4 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
-import EventAvailableIcon from '@mui/icons-material/EventAvailable'
-import ShortTextIcon from '@mui/icons-material/ShortText'
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight'
 import {
   Box,
@@ -12,12 +9,12 @@ import {
   ListItemButton,
   ListItemText,
   Skeleton,
-  Stack,
-  TextField
+  Stack
 } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 import AddReferenceDrawer from './AddReferenceDrawer'
+import TransactionDrawerForm from './TransactionDrawerForm'
 import TransactionReference from './TransactionReference'
 
 export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
@@ -29,8 +26,12 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
 
   const onTransactionOpen = () => {
     if (open) {
-      getTransaction(id).then(setFormData)
+      fetchTransaction()
     }
+  }
+
+  const fetchTransaction = () => {
+    getTransaction(id).then(setFormData)
   }
 
   useEffect(onTransactionOpen, [open])
@@ -43,16 +44,16 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
     setReportDrawer(false)
   }
 
-  const handleAddReference = () => {
+  const refreshData = () => {
     setFormData(null)
-    getTransaction(id).then(setFormData)
+    fetchTransaction()
   }
 
   return (
     <Drawer open={Boolean(open)} PaperProps={{ style: { width: '100%' } }}>
       <AddReferenceDrawer
         key={reportDrawer}
-        onAddReference={handleAddReference}
+        onAddReference={refreshData}
         onAddTab={onAddTab}
         onClose={handleClose}
         transaction={reportDrawer}
@@ -65,45 +66,11 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
       {formData ? (
         <Box sx={{ p: 2 }}>
           <Stack spacing={2}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-              <ShortTextIcon sx={{ color: 'action.active', mr: 2, my: 2 }} />
-              <TextField
-                InputProps={{
-                  readOnly: true
-                }}
-                label='Descrição'
-                multiline
-                style={{ flexGrow: 1 }}
-                value={formData.description}
-                variant='outlined'
-              />
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-              <EventAvailableIcon
-                sx={{ color: 'action.active', mr: 2, my: 2 }}
-              />
-              <TextField
-                InputProps={{
-                  readOnly: true
-                }}
-                label='Data'
-                style={{ flexGrow: 1 }}
-                value={formData.date}
-                variant='outlined'
-              />
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-              <AttachMoneyIcon sx={{ color: 'action.active', mr: 2, my: 2 }} />
-              <TextField
-                InputProps={{
-                  readOnly: true
-                }}
-                label='Valor'
-                style={{ flexGrow: 1 }}
-                value={formData.value}
-                variant='outlined'
-              />
-            </Box>
+            <TransactionDrawerForm
+              description={formData.description}
+              date={formData.date}
+              value={formData.value}
+            />
             <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <SubdirectoryArrowRightIcon
                 sx={{ color: 'action.active', mr: 2, my: 2 }}
@@ -115,6 +82,7 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
                       key={_id}
                       id={_id}
                       account={account}
+                      onDelete={refreshData}
                       value={value}
                     />
                   ))}

@@ -196,12 +196,6 @@ const deleteReference = asyncHandler(async (req, res) => {
     throw new Error('Usuário não encontrado')
   }
 
-  // Make sure the logged in user matches the reference user
-  if (reference.user.toString() !== req.user.id) {
-    res.status(401)
-    throw new Error('Usuário não autorizado')
-  }
-
   await reference.remove()
 
   res.status(200).json({ id: req.params.id })

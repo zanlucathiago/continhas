@@ -1,6 +1,7 @@
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
+import DeleteIcon from '@mui/icons-material/Delete'
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight'
 import {
   Box,
@@ -18,12 +19,14 @@ import AuthContext from '../context/AuthContext'
 import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
 
-export default function ViewReferenceDrawer ({ id, onClose }) {
+export default function ViewReferenceDrawer ({ id, onClose, onDelete }) {
+  const [deleting, setDeleting] = useState(false)
+
   const [alert, setAlert] = useState(null)
 
   const [referenceData, setReferenceData] = useState(null)
 
-  const { getReference } = useContext(AuthContext)
+  const { getReference, deleteReference } = useContext(AuthContext)
 
   const fetchReference = () => {
     getReference(id)
@@ -48,11 +51,25 @@ export default function ViewReferenceDrawer ({ id, onClose }) {
     fetchReference()
   }
 
+  const handleClickDelete = () => {
+    setDeleting(true)
+    deleteReference(id)
+      .then(onDelete)
+      .catch(stopDeleting)
+  }
+
+  const stopDeleting = () => {
+    setDeleting(false)
+  }
+
   return (
     <Drawer open={Boolean(id)} PaperProps={{ style: { width: '100%' } }}>
       <Stack direction='row' justifyContent='space-between'>
         <IconButton onClick={onClose}>
           <ArrowBackIcon />
+        </IconButton>
+        <IconButton disabled={deleting} onClick={handleClickDelete}>
+          <DeleteIcon />
         </IconButton>
       </Stack>
       <Box sx={{ p: 2 }}>
