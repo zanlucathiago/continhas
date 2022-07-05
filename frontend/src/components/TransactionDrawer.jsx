@@ -20,7 +20,7 @@ import AuthContext from '../context/AuthContext'
 import ReferenceDrawer from './AddReferenceDrawer'
 import TransactionReference from './TransactionReference'
 
-export default function TransactionDrawer ({ id, open, onClose }) {
+export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
   const [reportDrawer, setReportDrawer] = useState(null)
 
   const [formData, setFormData] = useState(null)
@@ -53,6 +53,7 @@ export default function TransactionDrawer ({ id, open, onClose }) {
       <ReferenceDrawer
         key={reportDrawer}
         onAddReference={handleAddReference}
+        onAddTab={onAddTab}
         onClose={handleClose}
         transaction={reportDrawer}
       />
@@ -119,7 +120,6 @@ export default function TransactionDrawer ({ id, open, onClose }) {
                   ))}
                   <ListItem sx={{ my: '6px' }}>
                     <ListItemButton
-                      disabled={!formData.hasAccounts}
                       onClick={handleClick}
                       style={{ paddingLeft: 0 }}
                     >

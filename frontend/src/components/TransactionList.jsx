@@ -10,7 +10,11 @@ import FetchSkeleton from './FetchSkeleton'
 import TransactionGroup from './TransactionGroup'
 import UploadButton from './UploadButton'
 
-export default function TransactionList ({ account, onChangeAccount }) {
+export default function TransactionList ({
+  account,
+  onChangeAccount,
+  onAddTab
+}) {
   const [alert, setAlert] = useState(null)
 
   const { getTransactions } = useContext(AuthContext)
@@ -63,6 +67,7 @@ export default function TransactionList ({ account, onChangeAccount }) {
                       key={_id}
                       _id={_id}
                       icon={icon}
+                      onAddTab={onAddTab}
                       primary={label}
                       secondary={secondary}
                       total={value}

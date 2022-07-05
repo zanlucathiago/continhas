@@ -2,23 +2,14 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import LoadingButton from '@mui/lab/LoadingButton'
-import {
-  Box,
-  Drawer,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Skeleton,
-  Stack,
-  TextField
-} from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
+import { Box, Drawer, IconButton, Stack, TextField } from '@mui/material'
+import { useContext, useState } from 'react'
 import AuthContext from '../context/AuthContext'
+import AccountSelect from './AccountSelect'
 
 export default function AddReferenceDrawer ({
   onAddReference,
+  onAddTab,
   onClose,
   transaction
 }) {
@@ -29,20 +20,7 @@ export default function AddReferenceDrawer ({
     value: ''
   })
 
-  const { getAccounts, createReference } = useContext(AuthContext)
-
-  const [accounts, setAccounts] = useState('')
-
-  const onGetAccounts = data => {
-    setAccounts(data)
-    setReferenceData({ ...referenceData, account: data[0]._id })
-  }
-
-  const fetchAccounts = () => {
-    getAccounts().then(onGetAccounts)
-  }
-
-  useEffect(fetchAccounts, [])
+  const { createReference } = useContext(AuthContext)
 
   const handleChangeReference = key => ({ target: { value } }) => {
     setReferenceData({ ...referenceData, [key]: value })
@@ -55,8 +33,8 @@ export default function AddReferenceDrawer ({
       .catch(stopSaving)
   }
 
-  const onReferenceSaved = () => {
-    onAddReference()
+  const onReferenceSaved = data => {
+    onAddReference(data)
     stopSaving()
     onClose()
   }
@@ -75,7 +53,7 @@ export default function AddReferenceDrawer ({
           <ArrowBackIcon />
         </IconButton>
         <LoadingButton
-          disabled={!referenceData.value}
+          disabled={!referenceData.value || !referenceData.account}
           loading={saving}
           onClick={handleClickSave}
         >
@@ -87,26 +65,10 @@ export default function AddReferenceDrawer ({
           <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
             <AccountCircle sx={{ color: 'action.active', mr: 2, my: 2 }} />
             <Box style={{ flexGrow: 1 }}>
-              {accounts ? (
-                <FormControl fullWidth>
-                  <InputLabel>Conta</InputLabel>
-                  <Select
-                    value={referenceData.account}
-                    label='Conta'
-                    onChange={handleChangeReference('account')}
-                  >
-                    {accounts.map(({ title, _id }) => (
-                      <MenuItem key={_id} value={_id}>
-                        {title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ) : (
-                <FormControl fullWidth>
-                  <Skeleton />
-                </FormControl>
-              )}
+              <AccountSelect
+                onAddTab={onAddTab}
+                onChange={handleChangeReference('account')}
+              />
             </Box>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
@@ -114,6 +76,7 @@ export default function AddReferenceDrawer ({
             <TextField
               label='Valor'
               onChange={handleChangeReference('value')}
+              required
               style={{ flexGrow: 1 }}
               type='number'
               value={referenceData.value}

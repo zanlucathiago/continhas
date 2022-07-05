@@ -7,14 +7,15 @@ const DEFAULT_ACCOUNT = 'DEFAULT'
 
 const ACCOUNT_TABS = [ADD_ACCOUNT, DEFAULT_ACCOUNT]
 
-export default function DefaultList ({ account, onChangeAccount }) {
+export default function DefaultList ({ account, onAddTab, onChangeAccount }) {
   return ACCOUNT_TABS.includes(account) ? (
     <TransactionList
       key={account}
       account={account}
+      onAddTab={onAddTab}
       onChangeAccount={onChangeAccount}
     />
   ) : (
-    <ReferenceList key={account} account={account} />
+    <ReferenceList key={account} account={account} onAddTab={onAddTab} />
   )
 }

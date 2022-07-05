@@ -14,6 +14,7 @@ export default function Transaction ({
   _id,
   icon,
   isCredit,
+  onAddTab,
   primary,
   secondary,
   total
@@ -57,6 +58,7 @@ export default function Transaction ({
       <TransactionDrawer
         key={open}
         id={_id}
+        onAddTab={onAddTab}
         open={open}
         onClose={handleClose}
       />

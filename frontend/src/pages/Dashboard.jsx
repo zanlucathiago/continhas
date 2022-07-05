@@ -46,11 +46,15 @@ export default function Dashboard () {
     setAddAccount(false)
   }
 
-  const handleAddTab = _id => {
+  const handleAddTab = ({ _id }) => {
     setActiveTab(_id)
     setReferences(null)
     fetchReferences()
     handleClose()
+  }
+
+  const onTabAdded = data => {
+    setReferences([...references, data])
   }
 
   const handleClick = () => {
@@ -61,6 +65,7 @@ export default function Dashboard () {
   return (
     <>
       <AccountDrawer
+        key={String(addAccount)}
         open={addAccount}
         onClose={handleClose}
         onAddTab={handleAddTab}
@@ -111,7 +116,11 @@ export default function Dashboard () {
             ) : (
               <FetchSkeleton />
             ))) || (
-            <DefaultList account={activeTab} onChangeAccount={setActiveTab} />
+            <DefaultList
+              account={activeTab}
+              onAddTab={onTabAdded}
+              onChangeAccount={setActiveTab}
+            />
           )}
         </Stack>
       </Box>

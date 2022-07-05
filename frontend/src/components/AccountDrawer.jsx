@@ -32,10 +32,10 @@ export default function AccountDrawer ({ open, onClose, onAddTab }) {
     setCreatingAccount(false)
   }
 
-  const handleAccountCreated = ({ _id }) => {
+  const handleAccountCreated = (data) => {
     setFormData({ title: '', email: '' })
     stopLoading()
-    onAddTab(_id)
+    onAddTab(data)
   }
 
   const onChange = property => ({ target: { value } }) => {
@@ -65,6 +65,7 @@ export default function AccountDrawer ({ open, onClose, onAddTab }) {
             </LoadingButton>
           </Stack>
           <TextField
+            autoFocus
             label='Nome'
             onChange={onChange('title')}
             required

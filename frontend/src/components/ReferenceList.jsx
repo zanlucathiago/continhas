@@ -8,7 +8,7 @@ import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
 import TransactionGroup from './TransactionGroup'
 
-export default function ReferenceList ({ account }) {
+export default function ReferenceList ({ account, onAddTab }) {
   const [alert, setAlert] = useState(null)
 
   const { getReferences } = useContext(AuthContext)
@@ -52,6 +52,7 @@ export default function ReferenceList ({ account }) {
                       key={_id}
                       _id={_id}
                       icon={icon}
+                      onAddTab={onAddTab}
                       primary={label}
                       secondary={secondary}
                       total={value}
