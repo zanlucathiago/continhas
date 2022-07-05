@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import AuthContext from '../context/AuthContext'
-import ReferenceDrawer from './AddReferenceDrawer'
+import AddReferenceDrawer from './AddReferenceDrawer'
 import TransactionReference from './TransactionReference'
 
 export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
@@ -49,8 +49,8 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
   }
 
   return (
-    <Drawer open={open} PaperProps={{ style: { width: '100%' } }}>
-      <ReferenceDrawer
+    <Drawer open={Boolean(open)} PaperProps={{ style: { width: '100%' } }}>
+      <AddReferenceDrawer
         key={reportDrawer}
         onAddReference={handleAddReference}
         onAddTab={onAddTab}

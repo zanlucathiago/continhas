@@ -16,6 +16,6 @@ export default function DefaultList ({ account, onAddTab, onChangeAccount }) {
       onChangeAccount={onChangeAccount}
     />
   ) : (
-    <ReferenceList key={account} account={account} onAddTab={onAddTab} />
+    <ReferenceList key={account} account={account} />
   )
 }

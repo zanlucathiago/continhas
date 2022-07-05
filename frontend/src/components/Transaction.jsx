@@ -6,34 +6,21 @@ import {
   SvgIcon,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
 import icons from '../icons'
-import TransactionDrawer from './TransactionDrawer'
 
 export default function Transaction ({
-  _id,
   icon,
   isCredit,
-  onAddTab,
+  onClick,
   primary,
   secondary,
   total
 }) {
   const Icon = icons[icon]
 
-  const [open, setOpen] = useState(false)
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-
-  const handleOpen = () => {
-    setOpen(true)
-  }
-
   return (
     <ListItem disableGutters>
-      <ListItemButton onClick={handleOpen} sx={{ p: 0 }}>
+      <ListItemButton onClick={onClick} sx={{ p: 0 }}>
         <ListItemIcon style={{ minWidth: 51 }}>
           <SvgIcon
             component={Icon}
@@ -55,13 +42,6 @@ export default function Transaction ({
           secondaryTypographyProps={{ component: 'span' }}
         />
       </ListItemButton>
-      <TransactionDrawer
-        key={open}
-        id={_id}
-        onAddTab={onAddTab}
-        open={open}
-        onClose={handleClose}
-      />
     </ListItem>
   )
 }

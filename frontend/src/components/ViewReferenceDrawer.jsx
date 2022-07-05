@@ -66,7 +66,7 @@ export default function ViewReferenceDrawer ({ id, onClose }) {
                   InputProps={{
                     readOnly: true
                   }}
-                  style={{ flexGrow: 1 }}
+                  style={{ width: '100%' }}
                   value={referenceData.account}
                   variant='outlined'
                 />
@@ -84,7 +84,7 @@ export default function ViewReferenceDrawer ({ id, onClose }) {
                 variant='outlined'
               />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <SubdirectoryArrowRightIcon
                 sx={{ color: 'action.active', mr: 2, my: 2 }}
               />

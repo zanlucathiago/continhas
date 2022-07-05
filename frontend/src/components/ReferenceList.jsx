@@ -7,8 +7,19 @@ import DefaultAlert from './DefaultAlert'
 import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
 import TransactionGroup from './TransactionGroup'
+import ViewReferenceDrawer from './ViewReferenceDrawer'
 
-export default function ReferenceList ({ account, onAddTab }) {
+export default function ReferenceList ({ account }) {
+  const [open, setOpen] = useState(false)
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const handleOpen = id => () => {
+    setOpen(id)
+  }
+
   const [alert, setAlert] = useState(null)
 
   const { getReferences } = useContext(AuthContext)
@@ -33,47 +44,45 @@ export default function ReferenceList ({ account, onAddTab }) {
   }
 
   return (
-    <>
-      {(groups &&
-        (groups.length ? (
-          <List
-            dense
-            subheader={<li />}
-            sx={{
-              '& ul': { padding: 0 },
-              '& li': { padding: 0 }
-            }}
-          >
-            {groups.map(({ date, references }) => (
-              <TransactionGroup date={date} key={date}>
-                {references.map(
-                  ({ icon, label, secondary, value, _id, isCredit }) => (
-                    <Transaction
-                      key={_id}
-                      _id={_id}
-                      icon={icon}
-                      onAddTab={onAddTab}
-                      primary={label}
-                      secondary={secondary}
-                      total={value}
-                      isCredit={isCredit}
-                    />
-                  )
-                )}
-              </TransactionGroup>
-            ))}
-          </List>
-        ) : (
-          <DefaultAlert Icon={Savings} severity='info'>
-            <AlertTitle>Sem continhas ainda</AlertTitle>Crie uma referência em
-            uma continha e faça o controle por aqui.
-          </DefaultAlert>
-        ))) ||
-        (alert ? (
-          <FetchAlert onClick={handleClick}>{alert}</FetchAlert>
-        ) : (
-          <FetchSkeleton />
-        ))}
-    </>
+    (groups &&
+      (groups.length ? (
+        <List
+          dense
+          subheader={<li />}
+          sx={{
+            '& ul': { padding: 0 },
+            '& li': { padding: 0 }
+          }}
+        >
+          <ViewReferenceDrawer key={open} id={open} onClose={handleClose} />
+          {groups.map(({ date, references }) => (
+            <TransactionGroup date={date} key={date}>
+              {references.map(
+                ({ icon, label, secondary, value, _id, isCredit }) => (
+                  <Transaction
+                    key={_id}
+                    icon={icon}
+                    onClick={handleOpen(_id)}
+                    primary={label}
+                    secondary={secondary}
+                    total={value}
+                    isCredit={isCredit}
+                  />
+                )
+              )}
+            </TransactionGroup>
+          ))}
+        </List>
+      ) : (
+        <DefaultAlert Icon={Savings} severity='info'>
+          <AlertTitle>Sem continhas ainda</AlertTitle>Crie uma referência em uma
+          continha e faça o controle por aqui.
+        </DefaultAlert>
+      ))) ||
+    (alert ? (
+      <FetchAlert onClick={handleClick}>{alert}</FetchAlert>
+    ) : (
+      <FetchSkeleton />
+    ))
   )
 }

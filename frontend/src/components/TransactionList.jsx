@@ -7,6 +7,7 @@ import AlertUploadButton from './AlertUploadButton'
 import DefaultAlert from './DefaultAlert'
 import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
+import TransactionDrawer from './TransactionDrawer'
 import TransactionGroup from './TransactionGroup'
 import UploadButton from './UploadButton'
 
@@ -15,6 +16,16 @@ export default function TransactionList ({
   onChangeAccount,
   onAddTab
 }) {
+  const [open, setOpen] = useState(false)
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const handleOpen = id => () => {
+    setOpen(id)
+  }
+
   const [alert, setAlert] = useState(null)
 
   const { getTransactions } = useContext(AuthContext)
@@ -59,6 +70,13 @@ export default function TransactionList ({
               '& li': { padding: 0 }
             }}
           >
+            <TransactionDrawer
+              key={open}
+              id={open}
+              onAddTab={onAddTab}
+              open={open}
+              onClose={handleClose}
+            />
             {groups.map(({ date, transactions }) => (
               <TransactionGroup date={date} key={date}>
                 {transactions.map(
@@ -67,7 +85,7 @@ export default function TransactionList ({
                       key={_id}
                       _id={_id}
                       icon={icon}
-                      onAddTab={onAddTab}
+                      onClick={handleOpen(_id)}
                       primary={label}
                       secondary={secondary}
                       total={value}
