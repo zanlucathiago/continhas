@@ -1,5 +1,5 @@
 import Savings from '@mui/icons-material/Savings'
-import { AlertTitle, List } from '@mui/material'
+import { AlertTitle, List, Typography } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import Transaction from '../components/Transaction'
 import AuthContext from '../context/AuthContext'
@@ -83,14 +83,16 @@ export default function TransactionList ({
                   ({ icon, label, secondary, value, _id, isCredit }) => (
                     <Transaction
                       key={_id}
-                      _id={_id}
                       icon={icon}
                       onClick={handleOpen(_id)}
                       primary={label}
-                      secondary={secondary}
-                      total={value}
                       isCredit={isCredit}
-                    />
+                    >
+                      <Typography variant='body2' noWrap>
+                        {secondary}
+                      </Typography>
+                      <Typography variant='body2'>{value}</Typography>
+                    </Transaction>
                   )
                 )}
               </TransactionGroup>

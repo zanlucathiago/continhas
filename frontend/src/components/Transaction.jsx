@@ -3,18 +3,16 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  SvgIcon,
-  Typography
+  SvgIcon
 } from '@mui/material'
 import icons from '../icons'
 
 export default function Transaction ({
+  children,
   icon,
   isCredit,
   onClick,
-  primary,
-  secondary,
-  total
+  primary
 }) {
   const Icon = icons[icon]
 
@@ -31,14 +29,7 @@ export default function Transaction ({
         <ListItemText
           primary={primary}
           primaryTypographyProps={{ noWrap: true }}
-          secondary={
-            <>
-              <Typography variant='body2' noWrap>
-                {secondary}
-              </Typography>
-              <Typography variant='body2'>{total}</Typography>
-            </>
-          }
+          secondary={children}
           secondaryTypographyProps={{ component: 'span' }}
         />
       </ListItemButton>

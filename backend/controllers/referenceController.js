@@ -7,21 +7,17 @@ const { ACCOUNT_MAPPER } = require('../enums/account');
 const Statement = require('../models/statementModel');
 const Account = require('../models/accountModel');
 const Transaction = require('../models/transactionModel');
-const { default: mongoose } = require('mongoose');
+const User = require('../models/userModel');
 
 // @desc    Get references
 // @route   GET /api/references
 // @access  Private
 const getReferences = asyncHandler(async (req, res) => {
-  const account = await Account.findById(req.query.account)
+  const referenceAccount = await Account.findById(req.query.account)
+  const user = await User.findById(req.user.id)
 
   const getGrouped = async () => {
     const grouped = await Reference.aggregate([
-      {
-        $match: {
-          account: account._id,
-        }
-      },
       {
         $lookup:
         {
@@ -40,8 +36,26 @@ const getReferences = asyncHandler(async (req, res) => {
             {
               $lookup: {
                 from: 'statements',
-                localField: 'statement',
-                foreignField: '_id',
+                let: {
+                  statement: '$statement'
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$$statement", "$_id"]
+                      }
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: 'users',
+                      localField: 'user',
+                      foreignField: '_id',
+                      as: 'users'
+                    }
+                  }
+                ],
                 as: 'statements'
               }
             }
@@ -50,11 +64,91 @@ const getReferences = asyncHandler(async (req, res) => {
         }
       },
       {
+        $lookup: {
+          from: 'accounts',
+          localField: 'account',
+          foreignField: '_id',
+          as: 'accounts'
+        }
+      },
+      {
+        $addFields: {
+          referenceUser: {
+            $first: "$accounts.referenceUser"
+          }
+        }
+      },
+      {
+        $match: {
+          $or: [
+            {
+              account: referenceAccount._id
+            },
+            {
+              referenceUser: user._id
+            },
+          ],
+        }
+      },
+      {
+        $addFields: {
+          isExternal: {
+            $eq: ["$referenceUser", user._id]
+          }
+        }
+      },
+      {
+        $addFields: {
+          category: {
+            "$switch": {
+              branches: [
+                { case: "$confirmed", then: "confirmed" },
+                { case: "$isExternal", then: "received" },
+              ],
+              default: "sended"
+            },
+          },
+          calculatedValue: {
+            "$switch": {
+              branches: [
+                {
+                  case: "$isExternal", then: {
+                    $subtract: [0, "$value"]
+                  }
+                },
+              ],
+              default: "$value"
+            },
+          }
+        }
+      },
+      {
         $group: {
           _id: {
-            $first: "$transactions.date"
+            date: {
+              $first: "$transactions.date",
+            },
+            category: "$category",
           },
-          references: { $push: '$$ROOT' }
+          references: { $push: '$$ROOT' },
+          category: {
+            $first: "$category"
+          },
+          dateGroupTotal: {
+            $sum: "$calculatedValue"
+          }
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          dates: { $push: '$$ROOT' },
+          category: {
+            $first: "$category"
+          },
+          total: {
+            $sum: "$dateGroupTotal"
+          }
         },
       },
       {
@@ -74,14 +168,24 @@ const getReferences = asyncHandler(async (req, res) => {
     }
 
     const formatGroups = ({
-      _id,
+      _id: { date },
       references,
     }) => ({
-      date: moment.utc(_id).format('ddd[, ]D[ de ]MMM[ de ]YYYY').toUpperCase(),
+      date: moment.utc(date).format('ddd[, ]D[ de ]MMM[ de ]YYYY').toUpperCase(),
       references: references.map(formatReference),
     })
 
-    return grouped.map(formatGroups)
+    const formatDateGroup = dateGroup => ({
+      color: dateGroup.total > 0 ? 'success' : 'error',
+      total: Math.abs(dateGroup.total).toLocaleString('pt-br', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
+      category: dateGroup.category,
+      dates: dateGroup.dates.map(formatGroups)
+    })
+
+    return grouped.map(formatDateGroup)
   }
 
   const result = await getGrouped()
@@ -110,13 +214,14 @@ const getReference = asyncHandler(async (req, res) => {
   }
 
   // Make sure the logged in user matches the reference user
-  if (statement.user.toString() !== req.user.id) {
-    res.status(401)
-    throw new Error('Usuário não autorizado')
-  }
+  // if (statement.user.toString() !== req.user.id) {
+  //   res.status(401)
+  //   throw new Error('Usuário não autorizado')
+  // }
   const { formatter } = ACCOUNT_MAPPER[statement.account]
 
   res.status(200).json({
+    isExternal: account.referenceUser._id.toString() === req.user.id,
     ...formatter(transaction.value, transaction.reference.split(',')),
     account: account.title,
     transactionValue: Math.abs(transaction.value).toLocaleString('pt-br', {
@@ -164,12 +269,6 @@ const updateReference = asyncHandler(async (req, res) => {
   if (!req.user) {
     res.status(401)
     throw new Error('Usuário não encontrado')
-  }
-
-  // Make sure the logged in user matches the reference user
-  if (reference.user.toString() !== req.user.id) {
-    res.status(401)
-    throw new Error('Usuário não autorizado')
   }
 
   const updatedReference = await Reference.findByIdAndUpdate(req.params.id, req.body, {

@@ -1,13 +1,17 @@
 import Savings from '@mui/icons-material/Savings'
-import { AlertTitle, List } from '@mui/material'
+import { AlertTitle, Typography } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import Transaction from '../components/Transaction'
 import AuthContext from '../context/AuthContext'
+import AccordionGroup from './AccordionGroup'
 import DefaultAlert from './DefaultAlert'
 import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
 import TransactionGroup from './TransactionGroup'
 import ViewReferenceDrawer from './ViewReferenceDrawer'
+
+const dateReducer = (quantity, dateGroup) =>
+  quantity + dateGroup.references.length
 
 export default function ReferenceList ({ account }) {
   const [open, setOpen] = useState(false)
@@ -43,7 +47,8 @@ export default function ReferenceList ({ account }) {
     fetchReferences()
   }
 
-  const handleDelete = () => {
+  const handleChange = () => {
+    handleClose()
     setReferences(null)
     fetchReferences()
   }
@@ -51,38 +56,40 @@ export default function ReferenceList ({ account }) {
   return (
     (groups &&
       (groups.length ? (
-        <List
-          dense
-          subheader={<li />}
-          sx={{
-            '& ul': { padding: 0 },
-            '& li': { padding: 0 }
-          }}
-        >
-          <ViewReferenceDrawer
-            key={open}
-            id={open}
-            onClose={handleClose}
-            onDelete={handleDelete}
-          />
-          {groups.map(({ date, references }) => (
-            <TransactionGroup date={date} key={date}>
-              {references.map(
-                ({ icon, label, secondary, value, _id, isCredit }) => (
+        groups.map(({ category, dates, total, color }) => (
+          <AccordionGroup
+            key={category}
+            color={color}
+            category={category}
+            quantity={dates.reduce(dateReducer, 0)}
+            total={total}
+          >
+            <ViewReferenceDrawer
+              key={open}
+              id={open}
+              onClose={handleClose}
+              onChange={handleChange}
+            />
+            {dates.map(({ date, references }) => (
+              <TransactionGroup date={date} key={date}>
+                {references.map(reference => (
                   <Transaction
-                    key={_id}
-                    icon={icon}
-                    onClick={handleOpen(_id)}
-                    primary={label}
-                    secondary={secondary}
-                    total={value}
-                    isCredit={isCredit}
-                  />
-                )
-              )}
-            </TransactionGroup>
-          ))}
-        </List>
+                    key={reference._id}
+                    icon={reference.icon}
+                    onClick={handleOpen(reference._id)}
+                    primary={reference.label}
+                    isCredit={reference.isCredit}
+                  >
+                    <Typography variant='body2' noWrap>
+                      {reference.secondary}
+                    </Typography>
+                    <Typography variant='body2'>{reference.value}</Typography>
+                  </Transaction>
+                ))}
+              </TransactionGroup>
+            ))}
+          </AccordionGroup>
+        ))
       ) : (
         <DefaultAlert Icon={Savings} severity='info'>
           <AlertTitle>Sem continhas ainda</AlertTitle>Crie uma referência em uma

@@ -16,6 +16,10 @@ const referenceSchema = mongoose.Schema(
       type: Number,
       required: [true, 'Por favor insira um valor'],
     },
+    confirmed: {
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,

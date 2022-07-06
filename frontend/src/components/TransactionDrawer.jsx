@@ -82,7 +82,7 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
                       key={_id}
                       id={_id}
                       account={account}
-                      onDelete={refreshData}
+                      onChange={refreshData}
                       value={value}
                     />
                   ))}

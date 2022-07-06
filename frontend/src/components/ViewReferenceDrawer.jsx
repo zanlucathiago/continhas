@@ -2,15 +2,11 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import DeleteIcon from '@mui/icons-material/Delete'
-import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight'
+import LoadingButton from '@mui/lab/LoadingButton'
 import {
   Box,
   Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Stack,
+  IconButton, Stack,
   TextField,
   Typography
 } from '@mui/material'
@@ -18,15 +14,18 @@ import { useContext, useEffect, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
+import OriginTransactionDetails from './OriginTransactionDetails'
 
-export default function ViewReferenceDrawer ({ id, onClose, onDelete }) {
-  const [deleting, setDeleting] = useState(false)
+export default function ViewReferenceDrawer ({ id, onClose, onChange }) {
+  const [loading, setLoading] = useState(false)
 
   const [alert, setAlert] = useState(null)
 
   const [referenceData, setReferenceData] = useState(null)
 
-  const { getReference, deleteReference } = useContext(AuthContext)
+  const { getReference, deleteReference, updateReference } = useContext(
+    AuthContext
+  )
 
   const fetchReference = () => {
     getReference(id)
@@ -52,14 +51,21 @@ export default function ViewReferenceDrawer ({ id, onClose, onDelete }) {
   }
 
   const handleClickDelete = () => {
-    setDeleting(true)
+    setLoading(true)
     deleteReference(id)
-      .then(onDelete)
-      .catch(stopDeleting)
+      .then(onChange)
+      .catch(stopLoading)
   }
 
-  const stopDeleting = () => {
-    setDeleting(false)
+  const stopLoading = () => {
+    setLoading(false)
+  }
+
+  const handleClickConfirm = () => {
+    setLoading(true)
+    updateReference(id, { confirmed: true })
+      .then(onChange)
+      .catch(stopLoading)
   }
 
   return (
@@ -68,9 +74,11 @@ export default function ViewReferenceDrawer ({ id, onClose, onDelete }) {
         <IconButton onClick={onClose}>
           <ArrowBackIcon />
         </IconButton>
-        <IconButton disabled={deleting} onClick={handleClickDelete}>
-          <DeleteIcon />
-        </IconButton>
+        {referenceData && !referenceData.isExternal && (
+          <IconButton disabled={loading} onClick={handleClickDelete}>
+            <DeleteIcon />
+          </IconButton>
+        )}
       </Stack>
       <Box sx={{ p: 2 }}>
         {(referenceData && (
@@ -79,7 +87,7 @@ export default function ViewReferenceDrawer ({ id, onClose, onDelete }) {
               <AccountCircle sx={{ color: 'action.active', mr: 2, my: 2 }} />
               <Box style={{ flexGrow: 1 }}>
                 <TextField
-                  label='Conta'
+                  label='Conta de origem'
                   InputProps={{
                     readOnly: true
                   }}
@@ -101,32 +109,14 @@ export default function ViewReferenceDrawer ({ id, onClose, onDelete }) {
                 variant='outlined'
               />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <SubdirectoryArrowRightIcon
-                sx={{ color: 'action.active', mr: 2, my: 2 }}
-              />
-              <Box style={{ flexGrow: 1 }}>
-                <List disablePadding dense>
-                  <ListItem disableGutters>
-                    <ListItemText
-                      primary={referenceData.label}
-                      primaryTypographyProps={{ noWrap: true }}
-                      secondary={
-                        <>
-                          <Typography variant='body2' noWrap>
-                            {referenceData.secondary}
-                          </Typography>
-                          <Typography variant='body2'>
-                            {referenceData.transactionValue}
-                          </Typography>
-                        </>
-                      }
-                      secondaryTypographyProps={{ component: 'span' }}
-                    />
-                  </ListItem>
-                </List>
-              </Box>
-            </Box>
+            <OriginTransactionDetails primary={referenceData.label}>
+              <Typography variant='body2' noWrap>
+                {referenceData.secondary}
+              </Typography>
+              <Typography variant='body2'>
+                {referenceData.transactionValue}
+              </Typography>
+            </OriginTransactionDetails>
           </Stack>
         )) ||
           (alert ? (
@@ -135,6 +125,13 @@ export default function ViewReferenceDrawer ({ id, onClose, onDelete }) {
             <FetchSkeleton />
           ))}
       </Box>
+      {referenceData && referenceData.isExternal && (
+        <Box sx={{ position: 'absolute', bottom: 0, right: 0, p: 2 }}>
+          <LoadingButton loading={loading} onClick={handleClickConfirm}>
+            Confirmar
+          </LoadingButton>
+        </Box>
+      )}
     </Drawer>
   )
 }
