@@ -8,7 +8,7 @@ const Statement = require('../models/statementModel');
 const Account = require('../models/accountModel');
 const Transaction = require('../models/transactionModel');
 const User = require('../models/userModel');
-
+const queries = require('../queries')
 // @desc    Get references
 // @route   GET /api/references
 // @access  Private
@@ -17,143 +17,7 @@ const getReferences = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id)
 
   const getGrouped = async () => {
-    const grouped = await Reference.aggregate([
-      {
-        $lookup:
-        {
-          from: 'transactions',
-          let: {
-            transaction: '$transaction'
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $eq: ["$$transaction", "$_id"]
-                }
-              }
-            },
-            {
-              $lookup: {
-                from: 'statements',
-                let: {
-                  statement: '$statement'
-                },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: {
-                        $eq: ["$$statement", "$_id"]
-                      }
-                    }
-                  },
-                  {
-                    $lookup: {
-                      from: 'users',
-                      localField: 'user',
-                      foreignField: '_id',
-                      as: 'users'
-                    }
-                  }
-                ],
-                as: 'statements'
-              }
-            }
-          ],
-          as: 'transactions'
-        }
-      },
-      {
-        $lookup: {
-          from: 'accounts',
-          localField: 'account',
-          foreignField: '_id',
-          as: 'accounts'
-        }
-      },
-      {
-        $addFields: {
-          referenceUser: {
-            $first: "$accounts.referenceUser"
-          }
-        }
-      },
-      {
-        $match: {
-          $or: [
-            {
-              account: referenceAccount._id
-            },
-            {
-              referenceUser: user._id
-            },
-          ],
-        }
-      },
-      {
-        $addFields: {
-          isExternal: {
-            $eq: ["$referenceUser", user._id]
-          }
-        }
-      },
-      {
-        $addFields: {
-          category: {
-            "$switch": {
-              branches: [
-                { case: "$confirmed", then: "confirmed" },
-                { case: "$isExternal", then: "received" },
-              ],
-              default: "sended"
-            },
-          },
-          calculatedValue: {
-            "$switch": {
-              branches: [
-                {
-                  case: "$isExternal", then: {
-                    $subtract: [0, "$value"]
-                  }
-                },
-              ],
-              default: "$value"
-            },
-          }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            date: {
-              $first: "$transactions.date",
-            },
-            category: "$category",
-          },
-          references: { $push: '$$ROOT' },
-          category: {
-            $first: "$category"
-          },
-          dateGroupTotal: {
-            $sum: "$calculatedValue"
-          }
-        },
-      },
-      {
-        $group: {
-          _id: "$category",
-          dates: { $push: '$$ROOT' },
-          category: {
-            $first: "$category"
-          },
-          total: {
-            $sum: "$dateGroupTotal"
-          }
-        },
-      },
-      {
-        $sort: { _id: -1 },
-      }])
+    const grouped = await Reference.aggregate(queries.getReferenceList(user, referenceAccount))
 
     const formatReference = ({ transactions: [{ reference, statements: [{ account }] }], _id, value }) => {
       const { formatter } = ACCOUNT_MAPPER[account]
