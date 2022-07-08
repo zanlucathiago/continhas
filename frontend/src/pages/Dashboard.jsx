@@ -108,7 +108,7 @@ export default function Dashboard () {
           value={ADD_ACCOUNT}
         />
       </Tabs>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ pt: 2, px: 2 }}>
         <Stack spacing={2}>
           {(!references &&
             (alert ? (

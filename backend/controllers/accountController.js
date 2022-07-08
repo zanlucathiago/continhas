@@ -50,13 +50,13 @@ const updateAccount = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('User not found')
   }
 
   // Make sure the logged in user matches the account user
   if (account.user.toString() !== req.user.id) {
-    res.status(401)
+    res.status(403)
     throw new Error('User not authorized')
   }
 
@@ -80,13 +80,13 @@ const deleteAccount = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('User not found')
   }
 
   // Make sure the logged in user matches the account user
   if (account.user.toString() !== req.user.id) {
-    res.status(401)
+    res.status(403)
     throw new Error('User not authorized')
   }
 
