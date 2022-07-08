@@ -3,20 +3,18 @@ import accountService from "../features/accountService";
 import referenceService from "../features/referenceService";
 import statementService from "../features/statementService";
 import transactionService from "../features/transactionService";
-import AlertContext from "./AlertContext";
 import UserContext from "./UserContext";
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
-  const { handleCatch } = useContext(AlertContext)
-  const { user: { token } } = useContext(UserContext)
+  const { handleCatch, user: { token } } = useContext(UserContext)
 
   const createStatement = handleCatch(statementService.createStatement(token))
 
-  const getTransactions = transactionService.getTransactions(token)
+  const getTransactions = handleCatch(transactionService.getTransactions(token))
 
-  const getTransaction = transactionService.getTransaction(token)
+  const getTransaction = handleCatch(transactionService.getTransaction(token))
 
   const createTransaction = handleCatch(transactionService.createTransaction(token))
 
@@ -24,9 +22,9 @@ export function AuthProvider({ children }) {
 
   const deleteTransaction = handleCatch(transactionService.deleteTransaction(token))
 
-  const getReferences = referenceService.getReferences(token)
+  const getReferences = handleCatch(referenceService.getReferences(token))
 
-  const getReference = referenceService.getReference(token)
+  const getReference = handleCatch(referenceService.getReference(token))
 
   const createReference = handleCatch(referenceService.createReference(token))
 
@@ -34,7 +32,7 @@ export function AuthProvider({ children }) {
 
   const deleteReference = handleCatch(referenceService.deleteReference(token))
 
-  const getAccounts = accountService.getAccounts(token)
+  const getAccounts = handleCatch(accountService.getAccounts(token))
 
   const createAccount = handleCatch(accountService.createAccount(token))
 

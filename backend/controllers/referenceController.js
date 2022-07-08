@@ -73,15 +73,10 @@ const getReference = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não encontrado')
   }
 
-  // Make sure the logged in user matches the reference user
-  // if (statement.user.toString() !== req.user.id) {
-  //   res.status(401)
-  //   throw new Error('Usuário não autorizado')
-  // }
   const { formatter } = ACCOUNT_MAPPER[statement.account]
 
   res.status(200).json({
@@ -131,7 +126,7 @@ const updateReference = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não encontrado')
   }
 
@@ -155,7 +150,7 @@ const deleteReference = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não encontrado')
   }
 

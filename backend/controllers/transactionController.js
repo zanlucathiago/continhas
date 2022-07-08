@@ -71,13 +71,13 @@ const getTransaction = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não encontrado')
   }
 
   // Make sure the logged in user matches the transaction user
   if (statement.user.toString() !== req.user.id) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não autorizado')
   }
 
@@ -139,13 +139,13 @@ const updateTransaction = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não encontrado')
   }
 
   // Make sure the logged in user matches the transaction user
   if (transaction.user.toString() !== req.user.id) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não autorizado')
   }
 
@@ -169,13 +169,13 @@ const deleteTransaction = asyncHandler(async (req, res) => {
 
   // Check for user
   if (!req.user) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não encontrado')
   }
 
   // Make sure the logged in user matches the transaction user
   if (transaction.user.toString() !== req.user.id) {
-    res.status(401)
+    res.status(403)
     throw new Error('Usuário não autorizado')
   }
 
