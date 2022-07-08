@@ -8,12 +8,12 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Skeleton,
   Stack
 } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 import AddReferenceDrawer from './AddReferenceDrawer'
+import FetchSkeleton from './FetchSkeleton'
 import TransactionDrawerForm from './TransactionDrawerForm'
 import TransactionReference from './TransactionReference'
 
@@ -101,7 +101,7 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
           </Stack>
         </Box>
       ) : (
-        <Skeleton />
+        <FetchSkeleton />
       )}
     </Drawer>
   )

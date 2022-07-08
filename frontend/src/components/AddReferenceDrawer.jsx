@@ -88,7 +88,7 @@ export default function AddReferenceDrawer ({
       </Stack>
       <Box sx={{ p: 2 }}>
         <Stack spacing={2}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <AccountCircle sx={{ color: 'action.active', mr: 2, my: 2 }} />
             <Box style={{ flexGrow: 1 }}>
               <AccountSelect
