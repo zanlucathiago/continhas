@@ -51,13 +51,6 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
 
   return (
     <Drawer open={Boolean(open)} PaperProps={{ style: { width: '100%' } }}>
-      <AddReferenceDrawer
-        key={reportDrawer}
-        onAddReference={refreshData}
-        onAddTab={onAddTab}
-        onClose={handleClose}
-        transaction={reportDrawer}
-      />
       <Stack direction='row' justifyContent='space-between'>
         <IconButton onClick={onClose}>
           <ArrowBackIcon />
@@ -65,6 +58,14 @@ export default function TransactionDrawer ({ id, onAddTab, open, onClose }) {
       </Stack>
       {formData ? (
         <Box sx={{ p: 2 }}>
+          <AddReferenceDrawer
+            key={reportDrawer}
+            onAddReference={refreshData}
+            onAddTab={onAddTab}
+            onClose={handleClose}
+            transaction={reportDrawer}
+            transactionValue={formData.rawValue}
+          />
           <Stack spacing={2}>
             <TransactionDrawerForm
               description={formData.description}

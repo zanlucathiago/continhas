@@ -15,6 +15,7 @@ const statementSchema = mongoose.Schema(
     account: {
       type: String,
       enum: ACCOUNTS,
+      required: true,
     },
     min: {
       type: Date,

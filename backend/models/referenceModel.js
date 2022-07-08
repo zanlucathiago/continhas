@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { STEPS } = require('../enums/step')
 
 const referenceSchema = mongoose.Schema(
   {
@@ -19,7 +20,12 @@ const referenceSchema = mongoose.Schema(
     confirmed: {
       type: Boolean,
       default: false,
-    }
+    },
+    step: {
+      type: String,
+      enum: STEPS,
+      retuired: true,
+    },
   },
   {
     timestamps: true,
