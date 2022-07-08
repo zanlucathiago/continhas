@@ -4,6 +4,7 @@ const ICON_MAPPER = {
   CAR: 'DirectionsCar',
   DEFAULT_CARD: 'CreditCard',
   DEFAULT_RECEIVED: 'ArrowDownward',
+  HOSPITAL: 'LocalHospital',
   HOUSE: 'House',
   JOYSTICK: 'SportsEsports',
   PENCIL: 'Create',
@@ -12,7 +13,10 @@ const ICON_MAPPER = {
   SENT_TRANSFER: 'ArrowUpward',
   ACCOUNT_CREDIT: 'KeyboardReturn',
   SUPERMARKET: 'LocalGroceryStore',
+  TENNIS: 'SportsTennis',
   TOOL: 'Build',
+  DISH: 'DinnerDining',
+  BALLS: 'Workspaces',
 }
 
 const TRANSACTION_MAPPER = {
@@ -82,6 +86,22 @@ const CATEGORY_MAPPER = {
   educação: {
     secondary: 'Educação',
     icon: ICON_MAPPER.PENCIL,
+  },
+  restaurante: {
+    secondary: 'Restaurante',
+    icon: ICON_MAPPER.DISH,
+  },
+  saúde: {
+    secondary: 'Saúde',
+    icon: ICON_MAPPER.HOSPITAL,
+  },
+  lazer: {
+    secondary: 'Lazer',
+    icon: ICON_MAPPER.TENNIS,
+  },
+  outros: {
+    secondary: 'Outros',
+    icon: ICON_MAPPER.BALLS,
   },
   "": {
     icon: ICON_MAPPER.DEFAULT_CARD,

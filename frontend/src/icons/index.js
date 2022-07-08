@@ -1,3 +1,7 @@
+import Workspaces from '@mui/icons-material/Workspaces';
+import SportsTennis from '@mui/icons-material/SportsTennis';
+import LocalHospital from '@mui/icons-material/LocalHospital';
+import DinnerDining from '@mui/icons-material/DinnerDining';
 import ArrowDownward from '@mui/icons-material/ArrowDownward';
 import ArrowUpward from '@mui/icons-material/ArrowUpward';
 import Build from '@mui/icons-material/Build';
@@ -18,14 +22,18 @@ const icons = {
   Build,
   Create,
   CreditCard,
+  DinnerDining,
   DirectionsCar,
   House,
   KeyboardReturn,
   LocalGroceryStore,
+  LocalHospital,
   QrCode2,
   Savings,
   ShoppingBag,
   SportsEsports,
+  SportsTennis,
+  Workspaces,
 }
 
 export default icons
