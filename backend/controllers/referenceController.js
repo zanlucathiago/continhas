@@ -1,7 +1,6 @@
 const moment = require('moment')
 moment.locale('pt-br');
 const asyncHandler = require('../middleware/asyncMiddleware');
-
 const Reference = require('../models/referenceModel');
 const { ACCOUNT_MAPPER } = require('../enums/account');
 const Statement = require('../models/statementModel');
@@ -9,6 +8,7 @@ const Account = require('../models/accountModel');
 const Transaction = require('../models/transactionModel');
 const User = require('../models/userModel');
 const queries = require('../queries')
+
 // @desc    Get references
 // @route   GET /api/references
 // @access  Private
@@ -80,6 +80,7 @@ const getReference = asyncHandler(async (req, res) => {
   const { formatter } = ACCOUNT_MAPPER[statement.account]
 
   res.status(200).json({
+    step: reference.step,
     isExternal: account.referenceUser._id.toString() === req.user.id,
     ...formatter(transaction.value, transaction.reference.split(',')),
     account: account.title,
@@ -99,15 +100,16 @@ const getReference = asyncHandler(async (req, res) => {
 // @route   POST /api/references
 // @access  Private
 const setReference = asyncHandler(async (req, res) => {
-  if (!req.body.transaction || !req.body.value || !req.body.account) {
+  if (!req.body.transaction || !req.body.value || !req.body.account || !req.body.step) {
     res.status(400)
-    throw new Error('Por favor adicione uma transação, um valor e uma conta.')
+    throw new Error('Por favor adicione uma transação, um valor, um percentual e uma conta.')
   }
 
   const reference = await Reference.create({
     transaction: req.body.transaction,
     value: req.body.value,
     account: req.body.account,
+    step: req.body.step,
   })
 
   res.status(200).json(reference)

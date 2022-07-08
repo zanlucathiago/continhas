@@ -1,4 +1,4 @@
-import AccountCircle from '@mui/icons-material/AccountCircle'
+import PercentIcon from '@mui/icons-material/Percent'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -6,7 +6,9 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import {
   Box,
   Drawer,
-  IconButton, Stack,
+  IconButton,
+  Slider,
+  Stack,
   TextField,
   Typography
 } from '@mui/material'
@@ -15,6 +17,8 @@ import AuthContext from '../context/AuthContext'
 import FetchAlert from './FetchAlert'
 import FetchSkeleton from './FetchSkeleton'
 import OriginTransactionDetails from './OriginTransactionDetails'
+import { VALUE_MAPPER, marks } from '../constants/step'
+import AccountField from './AccountField'
 
 export default function ViewReferenceDrawer ({ id, onClose, onChange }) {
   const [loading, setLoading] = useState(false)
@@ -83,17 +87,16 @@ export default function ViewReferenceDrawer ({ id, onClose, onChange }) {
       <Box sx={{ p: 2 }}>
         {(referenceData && (
           <Stack spacing={2}>
+            <AccountField value={referenceData.account} />
             <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-              <AccountCircle sx={{ color: 'action.active', mr: 2, my: 2 }} />
-              <Box style={{ flexGrow: 1 }}>
-                <TextField
-                  label='Conta de origem'
-                  InputProps={{
-                    readOnly: true
-                  }}
-                  style={{ width: '100%' }}
-                  value={referenceData.account}
-                  variant='outlined'
+              <PercentIcon sx={{ color: 'action.active', mr: 2, my: 2 }} />
+              <Box sx={{ flexGrow: 1, my: '6px', mr: '5px' }}>
+                <Slider
+                  defaultValue={VALUE_MAPPER[referenceData.step]}
+                  disabled
+                  max={142}
+                  step={null}
+                  marks={marks}
                 />
               </Box>
             </Box>
