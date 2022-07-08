@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const colors = require('colors');
 const dotenv = require('dotenv').config();
@@ -17,6 +18,19 @@ app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/accounts', require('./routes/accountRoutes'));
 app.use('/api/references', require('./routes/referenceRoutes'));
+
+// Serve frontend
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+  app.get('*', (_req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, '../', 'frontend', 'build', 'index.html')
+    )
+  );
+} else {
+  app.get('/', (_req, res) => res.send('Please set to production'));
+}
 
 app.use(errorHandler);
 
