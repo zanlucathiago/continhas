@@ -23,15 +23,15 @@ function App() {
       <AlertProvider>
         <ErrorSnackbar />
         <CssBaseline />
-        <UserProvider>
-          <Router>
+        <Router>
+          <UserProvider>
             <Routes>
               <Route path='/' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path='/login' element={<PublicRoute><Login /></PublicRoute>} />
               <Route path='/register' element={<PublicRoute><Register /></PublicRoute>} />
             </Routes>
-          </Router>
-        </UserProvider>
+          </UserProvider>
+        </Router>
       </AlertProvider>
     </ThemeProvider>
   )

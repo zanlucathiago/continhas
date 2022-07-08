@@ -49,17 +49,19 @@ export default function AccordionGroup ({
         </AccordionDetails>
       </Accordion>
       {category === 'confirmed' && (
-        <AppBar
-          position='fixed'
-          color='primary'
-          sx={{ top: 'auto', bottom: 0, alignItems: 'center' }}
-        >
-          <Toolbar>
-            <Typography color={`${color}.main`}>
-              Saldo confirmado: {total}
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <Box sx={{ height: '56px' }}>
+          <AppBar
+            position='fixed'
+            color='primary'
+            sx={{ top: 'auto', bottom: 0, alignItems: 'center', mt: 2 }}
+          >
+            <Toolbar>
+              <Typography color={`${color}.main`}>
+                Saldo confirmado: {total}
+              </Typography>
+            </Toolbar>
+          </AppBar>
+        </Box>
       )}
     </Box>
   )

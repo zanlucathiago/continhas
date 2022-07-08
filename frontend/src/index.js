@@ -9,9 +9,7 @@ const handleTimeout = (data, callback) => () => callback(data)
 
 const resolvePromise = ({ data }) => resolve => setTimeout(handleTimeout(data, resolve), DEFAULT_TIMEOUT)
 
-const rejectPromise = (error) => (_resolve, reject) => setTimeout(handleTimeout(Error(
-  error?.response?.data.message || 'A solicitação falhou devido a um erro de conexão.'
-), reject), DEFAULT_TIMEOUT)
+const rejectPromise = (error) => (_resolve, reject) => setTimeout(handleTimeout(error, reject), DEFAULT_TIMEOUT)
 
 const handleResponse = (callback) => (response) => new Promise(callback(response))
 
